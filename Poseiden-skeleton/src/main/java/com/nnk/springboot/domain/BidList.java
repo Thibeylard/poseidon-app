@@ -86,10 +86,6 @@ public class BidList {
         return BidListId;
     }
 
-    public void setBidListId(Integer bidListId) {
-        BidListId = bidListId;
-    }
-
     public String getAccount() {
         return account;
     }
