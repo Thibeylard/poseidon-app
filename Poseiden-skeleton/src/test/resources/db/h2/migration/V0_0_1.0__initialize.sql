@@ -1,6 +1,11 @@
+/*
+    SQL Dialect : H2
+    DB Version : 0.0.1.0
+    Description : Initialize database for tests
+ */
 
 CREATE TABLE BidList (
-  BidListId tinyint(4) NOT NULL AUTO_INCREMENT,
+  BidListId IDENTITY NOT NULL ,
   account VARCHAR(30) NOT NULL,
   type VARCHAR(30) NOT NULL,
   bidQuantity DOUBLE,
@@ -27,7 +32,7 @@ CREATE TABLE BidList (
 );
 
 CREATE TABLE Trade (
-  TradeId tinyint(4) NOT NULL AUTO_INCREMENT,
+  TradeId IDENTITY NOT NULL,
   account VARCHAR(30) NOT NULL,
   type VARCHAR(30) NOT NULL,
   buyQuantity DOUBLE,
@@ -53,7 +58,7 @@ CREATE TABLE Trade (
 );
 
 CREATE TABLE CurvePoint (
-  Id tinyint(4) NOT NULL AUTO_INCREMENT,
+  Id IDENTITY NOT NULL,
   CurveId tinyint,
   asOfDate TIMESTAMP,
   term DOUBLE ,
@@ -64,7 +69,7 @@ CREATE TABLE CurvePoint (
 );
 
 CREATE TABLE Rating (
-  Id tinyint(4) NOT NULL AUTO_INCREMENT,
+  Id IDENTITY NOT NULL,
   moodysRating VARCHAR(125),
   sandPRating VARCHAR(125),
   fitchRating VARCHAR(125),
@@ -74,7 +79,7 @@ CREATE TABLE Rating (
 );
 
 CREATE TABLE RuleName (
-  Id tinyint(4) NOT NULL AUTO_INCREMENT,
+  Id IDENTITY NOT NULL,
   name VARCHAR(125),
   description VARCHAR(125),
   json VARCHAR(125),
@@ -86,7 +91,7 @@ CREATE TABLE RuleName (
 );
 
 CREATE TABLE Users (
-  Id tinyint(4) NOT NULL AUTO_INCREMENT,
+  Id IDENTITY NOT NULL,
   username VARCHAR(125),
   password VARCHAR(125),
   fullname VARCHAR(125),
