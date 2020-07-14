@@ -1,5 +1,6 @@
 package com.nnk.springboot.domain;
 
+import com.nnk.springboot.annotations.RangeDouble;
 import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
@@ -13,9 +14,12 @@ public class CurvePoint {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
+    @NotBlank(message = "Curve Id must no be null")
     private Integer curveId;
     private Timestamp asOfDate;
+    @RangeDouble(min = 0.0)
     private Double term;
+    @RangeDouble(min = 0.0)
     private Double value;
     private Timestamp creationDate;
 

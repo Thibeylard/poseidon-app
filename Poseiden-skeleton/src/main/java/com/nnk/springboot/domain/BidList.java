@@ -1,8 +1,10 @@
 package com.nnk.springboot.domain;
 
+import com.nnk.springboot.annotations.RangeDouble;
 import org.springframework.beans.factory.annotation.Required;
 
 import javax.persistence.*;
+import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotBlank;
 import java.sql.Date;
@@ -13,11 +15,17 @@ public class BidList {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer BidListId;
+    @NotBlank(message = "Account is mandatory")
     private String account;
+    @NotBlank(message = "Type is mandatory")
     private String type;
+    @RangeDouble(min = 0.0)
     private Double bidQuantity;
+    @RangeDouble(min = 0.0)
     private Double askQuantity;
+    @RangeDouble(min = 0.0)
     private Double bid;
+    @RangeDouble(min = 0.0)
     private Double ask;
     private String benchmark;
     private Timestamp bidListDate;

@@ -69,6 +69,27 @@
 			<scope>test</scope>
 		</dependency>
 
+		<!-- Password validation -->
+		<dependency>
+			<groupId>org.passay</groupId>
+			<artifactId>passay</artifactId>
+			<version>1.6.0</version>
+		</dependency>
+
+		<!-- Double validation -->
+		<dependency>
+			<groupId>commons-validator</groupId>
+			<artifactId>commons-validator</artifactId>
+			<version>1.6</version>
+		</dependency>
+
+		<!-- Array<String> joiner -->
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>19.0</version>
+		</dependency>
+
 		<!-- =================== database related dependencies =================== -->
 		<dependency>
 			<groupId>mysql</groupId>

@@ -9,7 +9,9 @@ public class RuleName {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
+    @NotBlank(message = "Name is mandatory")
     private String name;
+    @NotBlank(message = "Description is mandatory")
     private String description;
     private String json;
     private String template;
