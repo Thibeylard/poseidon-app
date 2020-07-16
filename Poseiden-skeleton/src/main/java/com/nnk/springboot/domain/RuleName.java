@@ -1,11 +1,14 @@
 package com.nnk.springboot.domain;
 
+import lombok.Data;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.sql.Timestamp;
 
 @Entity
-public class RuleName {
+public @Data
+class RuleName {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
@@ -18,17 +21,15 @@ public class RuleName {
     private String sqlStr;
     private String sqlPart;
 
-    public RuleName() {
+    protected RuleName() {
     }
 
-    public RuleName(Integer id,
-                    String name,
+    public RuleName(String name,
                     String description,
                     String json,
                     String template,
                     String sqlStr,
                     String sqlPart) {
-        this.id = id;
         this.name = name;
         this.description = description;
         this.json = json;
@@ -37,55 +38,4 @@ public class RuleName {
         this.sqlPart = sqlPart;
     }
 
-    public Integer getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getJson() {
-        return json;
-    }
-
-    public void setJson(String json) {
-        this.json = json;
-    }
-
-    public String getTemplate() {
-        return template;
-    }
-
-    public void setTemplate(String template) {
-        this.template = template;
-    }
-
-    public String getSqlStr() {
-        return sqlStr;
-    }
-
-    public void setSqlStr(String sqlStr) {
-        this.sqlStr = sqlStr;
-    }
-
-    public String getSqlPart() {
-        return sqlPart;
-    }
-
-    public void setSqlPart(String sqlPart) {
-        this.sqlPart = sqlPart;
-    }
 }
