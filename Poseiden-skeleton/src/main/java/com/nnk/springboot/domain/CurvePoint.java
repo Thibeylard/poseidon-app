@@ -2,10 +2,11 @@ package com.nnk.springboot.domain;
 
 import com.nnk.springboot.annotations.RangeDouble;
 import lombok.Data;
-import org.hibernate.validator.constraints.Length;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
 
@@ -14,9 +15,9 @@ import java.sql.Timestamp;
 public @Data
 class CurvePoint {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @NotBlank(message = "Curve Id must no be null")
+    @NotNull(message = "Curve Id must no be null")
     private Integer curveId;
     private Timestamp asOfDate;
     @RangeDouble(min = 0.0)

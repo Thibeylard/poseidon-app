@@ -4,7 +4,6 @@ import com.nnk.springboot.annotations.ValidPassword;
 import lombok.Data;
 
 import javax.persistence.*;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 
 @Entity
@@ -12,7 +11,7 @@ import javax.validation.constraints.NotBlank;
 public @Data
 class User {
     @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     @NotBlank(message = "Username is mandatory")
     private String username;
@@ -24,7 +23,8 @@ class User {
     @NotBlank(message = "Role is mandatory")
     private String role;
 
-    protected User() {}
+    protected User() {
+    }
 
 
 }

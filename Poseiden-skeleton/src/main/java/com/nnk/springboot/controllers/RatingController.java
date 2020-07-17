@@ -16,8 +16,7 @@ public class RatingController {
     // TODO: Inject Rating service
 
     @RequestMapping("/rating/list")
-    public String home(Model model)
-    {
+    public String home(Model model) {
         // TODO: find all Rating, add to model
         return "rating/list";
     }
@@ -41,7 +40,7 @@ public class RatingController {
 
     @PostMapping("/rating/update/{id}")
     public String updateRating(@PathVariable("id") Integer id, @Valid Rating rating,
-                             BindingResult result, Model model) {
+                               BindingResult result, Model model) {
         // TODO: check required fields, if valid call service to update Rating and return Rating list
         return "redirect:/rating/list";
     }

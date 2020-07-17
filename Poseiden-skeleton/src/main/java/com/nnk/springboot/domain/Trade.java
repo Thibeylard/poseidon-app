@@ -1,9 +1,11 @@
 package com.nnk.springboot.domain;
 
-import com.nnk.springboot.annotations.RangeDouble;
 import lombok.Data;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.validation.constraints.NotBlank;
 import java.sql.Timestamp;
 
@@ -12,19 +14,15 @@ import java.sql.Timestamp;
 public @Data
 class Trade {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer tradeId;
     @NotBlank(message = "Account is mandatory")
     private String account;
     @NotBlank(message = "Type is mandatory")
     private String type;
-    @RangeDouble(min = 0.0)
     private Double buyQuantity;
-    @RangeDouble(min = 0.0)
     private Double sellQuantity;
-    @RangeDouble(min = 0.0)
     private Double buyPrice;
-    @RangeDouble(min = 0.0)
     private Double sellPrice;
     private String benchmark;
     private Timestamp tradeDate;

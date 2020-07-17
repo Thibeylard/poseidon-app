@@ -2,20 +2,19 @@ package com.nnk.springboot.domain;
 
 import com.nnk.springboot.annotations.RangeDouble;
 import lombok.Data;
-import org.springframework.beans.factory.annotation.Required;
 
-import javax.persistence.*;
-import javax.validation.constraints.DecimalMin;
-import javax.validation.constraints.Digits;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.validation.constraints.NotBlank;
-import java.sql.Date;
 import java.sql.Timestamp;
 
 @Entity
 public @Data
 class BidList {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer BidListId;
     @NotBlank(message = "Account is mandatory")
     private String account;
@@ -23,11 +22,8 @@ class BidList {
     private String type;
     @RangeDouble(min = 0.0)
     private Double bidQuantity;
-    @RangeDouble(min = 0.0)
     private Double askQuantity;
-    @RangeDouble(min = 0.0)
     private Double bid;
-    @RangeDouble(min = 0.0)
     private Double ask;
     private String benchmark;
     private Timestamp bidListDate;
