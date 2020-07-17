@@ -1,17 +1,14 @@
-package com.nnk.springboot.integration;
+package com.nnk.springboot.integration.daos;
 
 import com.nnk.springboot.domain.Trade;
 import com.nnk.springboot.repositories.TradeRepository;
 import org.flywaydb.test.FlywayTestExecutionListener;
 import org.flywaydb.test.annotation.FlywayTest;
-import org.flywaydb.test.junit5.FlywayTestExtension;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Profile;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -23,8 +20,8 @@ import java.util.Optional;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @TestExecutionListeners({DependencyInjectionTestExecutionListener.class, FlywayTestExecutionListener.class})
-@ActiveProfiles("test")
-public class TradeRepositoryTests {
+@ActiveProfiles("testH2")
+public class TradeRepositoryIT {
 
 	@Autowired
 	private TradeRepository tradeRepository;

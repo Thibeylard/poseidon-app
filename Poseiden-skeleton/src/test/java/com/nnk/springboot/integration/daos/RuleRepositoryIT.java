@@ -1,4 +1,4 @@
-package com.nnk.springboot.integration;
+package com.nnk.springboot.integration.daos;
 
 import com.nnk.springboot.domain.RuleName;
 import com.nnk.springboot.repositories.RuleNameRepository;
@@ -9,7 +9,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Profile;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -21,8 +20,8 @@ import java.util.Optional;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @TestExecutionListeners({DependencyInjectionTestExecutionListener.class, FlywayTestExecutionListener.class})
-@ActiveProfiles("test")
-public class RuleRepositoryTests {
+@ActiveProfiles("testH2")
+public class RuleRepositoryIT {
 
 	@Autowired
 	private RuleNameRepository ruleNameRepository;

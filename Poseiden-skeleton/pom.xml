@@ -101,10 +101,25 @@
 			<scope>provided</scope>
 		</dependency>
 
+		<!-- Found necessary to run app : reimport hibernate.validator ValueExtractorManager -->
 		<dependency>
 			<groupId>org.hibernate.validator</groupId>
 			<artifactId>hibernate-validator</artifactId>
 			<version>6.1.1.Final</version>
+		</dependency>
+
+		<!-- Found necessary to make surefire Maven tests work -->
+		<dependency>
+			<groupId>org.glassfish</groupId>
+			<artifactId>javax.xml.bind</artifactId>
+			<version>10.0-b28</version>
+		</dependency>
+
+		<!-- Found necessary to make surefire Maven tests work : help in lazy loading ?-->
+		<dependency>
+			<groupId>org.javassist</groupId>
+			<artifactId>javassist</artifactId>
+			<version>3.24.0-GA</version>
 		</dependency>
 
 
@@ -188,6 +203,28 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>${surefire.version}</version>
+				<configuration>
+					<excludes>
+						<exclude>*IT</exclude>
+					</excludes>
+				</configuration>
+				<executions>
+					<execution>
+						<id>surefire-integration-test</id>
+						<goals>
+							<goal>test</goal>
+						</goals>
+						<phase>integration-test</phase>
+						<configuration>
+							<excludes>
+								<exclude>none</exclude>
+							</excludes>
+							<includes>
+								<include>*IT</include>
+							</includes>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 
 			<!-- =================== JaCoCo plugin executions =================== -->

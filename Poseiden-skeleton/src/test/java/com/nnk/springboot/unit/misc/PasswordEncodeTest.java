@@ -1,14 +1,11 @@
-package com.nnk.springboot.unit;
+package com.nnk.springboot.unit.misc;
 
-import org.flywaydb.test.FlywayTestExecutionListener;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.test.context.TestExecutionListeners;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
 /**
  * Created by Khang Nguyen.
@@ -18,7 +15,7 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest
-@Profile("test")
+@ActiveProfiles("test")
 public class PasswordEncodeTest {
     @Test
     public void testPassword() {

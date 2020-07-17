@@ -1,7 +1,7 @@
-package com.nnk.springboot.integration;
+package com.nnk.springboot.integration.daos;
 
-import com.nnk.springboot.domain.BidList;
-import com.nnk.springboot.repositories.BidListRepository;
+import com.nnk.springboot.domain.Rating;
+import com.nnk.springboot.repositories.RatingRepository;
 import org.flywaydb.test.FlywayTestExecutionListener;
 import org.flywaydb.test.annotation.FlywayTest;
 import org.junit.Assert;
@@ -9,7 +9,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Profile;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -21,35 +20,35 @@ import java.util.Optional;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @TestExecutionListeners({DependencyInjectionTestExecutionListener.class, FlywayTestExecutionListener.class})
-@ActiveProfiles("test")
-public class BidRepositoryTests {
+@ActiveProfiles("testH2")
+public class RatingRepositoryIT {
 
 	@Autowired
-	private BidListRepository bidListRepository;
+	private RatingRepository ratingRepository;
 
 	@Test
 	@FlywayTest
-	public void bidListTest() {
-		BidList bid = new BidList("Account Test", "Type Test", 10d);
+	public void ratingTest() {
+		Rating rating = new Rating("Moodys Rating", "Sand PRating", "Fitch Rating", 10);
 
 		// Save
-		bid = bidListRepository.save(bid);
-		Assert.assertNotNull(bid.getBidListId());
-		Assert.assertEquals(bid.getBidQuantity(), 10d, 10d);
+		rating = ratingRepository.save(rating);
+		Assert.assertNotNull(rating.getId());
+		Assert.assertTrue(rating.getOrderNumber() == 10);
 
 		// Update
-		bid.setBidQuantity(20d);
-		bid = bidListRepository.save(bid);
-		Assert.assertEquals(bid.getBidQuantity(), 20d, 20d);
+		rating.setOrderNumber(20);
+		rating = ratingRepository.save(rating);
+		Assert.assertTrue(rating.getOrderNumber() == 20);
 
 		// Find
-		List<BidList> listResult = bidListRepository.findAll();
+		List<Rating> listResult = ratingRepository.findAll();
 		Assert.assertTrue(listResult.size() > 0);
 
 		// Delete
-		Integer id = bid.getBidListId();
-		bidListRepository.delete(bid);
-		Optional<BidList> bidList = bidListRepository.findById(id);
-		Assert.assertFalse(bidList.isPresent());
+		Integer id = rating.getId();
+		ratingRepository.delete(rating);
+		Optional<Rating> ratingList = ratingRepository.findById(id);
+		Assert.assertFalse(ratingList.isPresent());
 	}
 }
