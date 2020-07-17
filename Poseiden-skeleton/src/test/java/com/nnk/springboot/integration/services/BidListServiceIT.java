@@ -36,6 +36,8 @@ public class BidListServiceIT {
         BidList bid = new BidList("Account Test", "Type Test", 10d);
         BidList bidUpdate = new BidList("Account Test", "Other Test", 30d);
 
+        int bidsSize = bidListService.findAll().size();
+
         bidListService.save(bid);
         bidListService.update(bid.getBidListId(), bidUpdate);
 
@@ -44,8 +46,8 @@ public class BidListServiceIT {
         List<BidList> bids = (List<BidList>) bidListService.findAll();
 
         assertThat(bids)
-                .hasSize(1);
-        assertThat(bids.get(0))
+                .hasSize(bidsSize + 1);
+        assertThat(bids.get(bidsSize))
                 .isEqualToComparingFieldByField(bid);
 
         assertThat(bid).isEqualToIgnoringGivenFields(bidUpdate, "BidListId");
