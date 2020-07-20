@@ -13,10 +13,21 @@
 	</div>
 
 	<div class="row">
-		<form action="#" th:action="@{/bidList/update/{id}(id=${bidList.bidListId})}" th:object="${bidList}" method="post" class="form-horizontal" style="width: 100%">
-			<!--
-			TODO: Create a form to edit the values of Bid, there are 2 buttons: Update data and Cancel to the list Bid
-			 -->
+		<form action="#" class="form-horizontal" method="post" style="width: 100%"
+			  th:action="@{/bidList/update/{id}(id=${bidListID})}" th:object="${bidList}">
+			<label th:for="account">Account</label>
+			<input th:field="${bidList.account}" type="text"/><br/>
+			<div style="color:red" th:if="${#fields.hasErrors('${bidList.account}')}">Account is mandatory<br/></div>
+			<label th:for="type">Type</label>
+			<input th:field="${bidList.type}" type="text"/><br/>
+			<div style="color:red" th:if="${#fields.hasErrors('${bidList.type}')}">Type is mandatory</div>
+			<label th:for="bidQuantity">BidQuantity</label>
+			<input th:field="${bidList.bidQuantity}" type="text"/><br/>
+			<div style="color:red" th:if="${#fields.hasErrors('${bidList.bidQuantity}')}">BidQuantity must be greater or
+				equal to 0
+			</div>
+			<a th:href="@{/bidList/list}"><input type="button" value="Cancel"/></a>
+			<input type="submit" value="Update BidList"/></input>
 		</form>
 	</div>
 
