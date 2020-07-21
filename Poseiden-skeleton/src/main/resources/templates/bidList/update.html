@@ -14,7 +14,8 @@
 
 	<div class="row">
 		<form action="#" class="form-horizontal" method="post" style="width: 100%"
-			  th:action="@{/bidList/update/{id}(id=${bidListID})}" th:object="${bidList}">
+			  th:action="@{/bidList/update/{id}(id=${bidList.BidListId})}" th:object="${bidList}">
+			<input th:field="${bidList.BidListId}" type="hidden"/>
 			<label th:for="account">Account</label>
 			<input th:field="${bidList.account}" type="text"/><br/>
 			<div style="color:red" th:if="${#fields.hasErrors('${bidList.account}')}">Account is mandatory<br/></div>

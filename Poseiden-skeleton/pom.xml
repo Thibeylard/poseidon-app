@@ -112,26 +112,32 @@
 		<dependency>
 			<groupId>org.glassfish</groupId>
 			<artifactId>javax.xml.bind</artifactId>
-			<version>10.0-b28</version>
-		</dependency>
+            <version>10.0-b28</version>
+        </dependency>
 
-		<!-- Found necessary to make surefire Maven tests work : help in lazy loading ?-->
-		<dependency>
-			<groupId>org.javassist</groupId>
-			<artifactId>javassist</artifactId>
-			<version>3.24.0-GA</version>
-		</dependency>
+        <!-- Found necessary to make surefire Maven tests work : help in lazy loading ?-->
+        <dependency>
+            <groupId>org.javassist</groupId>
+            <artifactId>javassist</artifactId>
+            <version>3.24.0-GA</version>
+        </dependency>
 
+        <!-- Generates API documentation-->
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-ui</artifactId>
+            <version>1.2.32</version>
+        </dependency>
 
-		<!-- =================== database related dependencies =================== -->
-		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.h2database</groupId>
-			<artifactId>h2</artifactId>
-		</dependency>
+        <!-- =================== database related dependencies =================== -->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+        </dependency>
 		<dependency>
 			<groupId>org.flywaydb</groupId>
 			<artifactId>flyway-core</artifactId>
