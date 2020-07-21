@@ -1,6 +1,7 @@
 package com.nnk.springboot.services;
 
 import com.nnk.springboot.domain.BidList;
+import com.nnk.springboot.dtos.BidListAddDTO;
 import com.nnk.springboot.repositories.BidListRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,8 +33,8 @@ public class BidListServiceImpl implements BidListService {
     }
 
     @Override
-    public BidList save(BidList bidList) {
-        return bidListRepository.save(bidList);
+    public BidList save(BidListAddDTO bidList) {
+        return bidListRepository.save(new BidList(bidList));
     }
 
     @Override

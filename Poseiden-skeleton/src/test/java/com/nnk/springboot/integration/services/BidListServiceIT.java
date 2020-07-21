@@ -1,6 +1,7 @@
 package com.nnk.springboot.integration.services;
 
 import com.nnk.springboot.domain.BidList;
+import com.nnk.springboot.dtos.BidListAddDTO;
 import com.nnk.springboot.services.BidListService;
 import org.flywaydb.test.FlywayTestExecutionListener;
 import org.flywaydb.test.annotation.FlywayTest;
@@ -33,12 +34,13 @@ public class BidListServiceIT {
     public void bidListServiceTests() {
 
         //BidList Save + Find + Update
-        BidList bid = new BidList("Account Test", "Type Test", 10d);
+        BidListAddDTO bidForm = new BidListAddDTO("Account Test", "Type Test", 10d);
+        BidList bid = new BidList(bidForm);
         BidList bidUpdate = new BidList("Account Test", "Other Test", 30d);
 
         int bidsSize = bidListService.findAll().size();
 
-        bidListService.save(bid);
+        bidListService.save(bidForm);
         bidListService.update(bid.getBidListId(), bidUpdate);
 
         bid = bidListService.findById(bid.getBidListId());

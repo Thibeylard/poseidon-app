@@ -26,6 +26,7 @@
 		<tinylog.version>2.0.1</tinylog.version>
 		<jacoco.version>0.8.5</jacoco.version>
 		<surefire.version>3.0.0-M4</surefire.version>
+		<springfox-version>2.9.2</springfox-version>
 	</properties>
 
 	<dependencies>
@@ -118,26 +119,32 @@
         <!-- Found necessary to make surefire Maven tests work : help in lazy loading ?-->
         <dependency>
             <groupId>org.javassist</groupId>
-            <artifactId>javassist</artifactId>
-            <version>3.24.0-GA</version>
-        </dependency>
+			<artifactId>javassist</artifactId>
+			<version>3.24.0-GA</version>
+		</dependency>
 
-        <!-- Generates API documentation-->
-        <dependency>
-            <groupId>org.springdoc</groupId>
-            <artifactId>springdoc-openapi-ui</artifactId>
-            <version>1.2.32</version>
-        </dependency>
+		<!-- Generates API documentation-->
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-ui</artifactId>
+			<version>1.2.32</version>
+		</dependency>
 
-        <!-- =================== database related dependencies =================== -->
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-        </dependency>
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger2</artifactId>
+			<version>${springfox-version}</version>
+		</dependency>
+
+		<!-- =================== database related dependencies =================== -->
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>org.flywaydb</groupId>
 			<artifactId>flyway-core</artifactId>

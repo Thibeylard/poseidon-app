@@ -2,6 +2,7 @@ package com.nnk.springboot.unit.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nnk.springboot.domain.BidList;
+import com.nnk.springboot.dtos.BidListAddDTO;
 import com.nnk.springboot.services.BidListService;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,6 +23,7 @@ import java.util.Collection;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -92,14 +94,16 @@ public class BidListControllerTest {
     @Test
     @WithMockUser
     public void Given_addBidListURI_When_postRequest_Then_returnAddedBidList() throws Exception {
-        BidList addedBid = new BidList("account_a", "type_a", 42.3);
+        BidListAddDTO bidForm = new BidListAddDTO("account_a", "type_a", 42.3);
+        BidList addedBid = new BidList(bidForm);
 
-        when(bidListService.save(any(BidList.class))).thenReturn(addedBid);
+        when(bidListService.save(any(BidListAddDTO.class))).thenReturn(addedBid);
 
         MvcResult response = mockMvc.perform(post("/bidList/add")
-                .param("account", addedBid.getAccount())
-                .param("type", addedBid.getType())
-                .param("bidQuantity", addedBid.getBidQuantity().toString()))
+                .accept("application/json")
+                .contentType("application/json")
+                .content(objectMapper.writeValueAsString(bidForm))
+                .with(csrf()))
                 .andExpect(status().isCreated())
                 .andReturn();
 

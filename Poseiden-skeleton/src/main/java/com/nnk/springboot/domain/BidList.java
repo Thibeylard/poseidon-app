@@ -1,6 +1,8 @@
 package com.nnk.springboot.domain;
 
 import com.nnk.springboot.annotations.RangeDouble;
+import com.nnk.springboot.dtos.BidListAddDTO;
+import com.nnk.springboot.dtos.BidListUpdateDTO;
 import lombok.Data;
 
 import javax.persistence.Entity;
@@ -50,4 +52,16 @@ class BidList {
         this.bidQuantity = bidQuantity;
     }
 
+    public BidList(BidListAddDTO bidListAddDTO) {
+        this.account = bidListAddDTO.getAccount();
+        this.type = bidListAddDTO.getType();
+        this.bidQuantity = bidListAddDTO.getBidQuantity();
+    }
+
+    public BidList(BidListUpdateDTO bidListUpdateDTO) {
+        this.BidListId = bidListUpdateDTO.getBidListId();
+        this.account = bidListUpdateDTO.getAccount();
+        this.type = bidListUpdateDTO.getType();
+        this.bidQuantity = bidListUpdateDTO.getBidQuantity();
+    }
 }
