@@ -1,5 +1,6 @@
 package com.nnk.springboot.unit.controllers;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nnk.springboot.domain.BidList;
 import com.nnk.springboot.services.BidListService;
 import org.junit.Before;
@@ -12,20 +13,18 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.equalTo;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.when;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -38,6 +37,8 @@ public class BidListControllerTest {
     private WebApplicationContext context;
     @MockBean
     private BidListService bidListService;
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Before
     public void setup() {
@@ -48,100 +49,103 @@ public class BidListControllerTest {
 
     @Test
     @WithMockUser
-    public void getAll() throws Exception {
-        ArrayList<BidList> allBids = new ArrayList<>();
-        BidList bidA = new BidList("account_a", "type_a", 41.5);
-        BidList bidB = new BidList("account_b", "type_b", 14.3);
-        allBids.add(bidA);
-        allBids.add(bidB);
+    public void Given_getAllBidListURI_When_getRequest_Then_returnAllBidLists() throws Exception {
+        Collection<BidList> allBids = new ArrayList<>();
+        allBids.add(new BidList("account_a", "type_a", 42.3));
+        allBids.add(new BidList("account_b", "type_b", 86.52));
+        allBids.add(new BidList("account_c", "type_c", 14.2));
+
         when(bidListService.findAll()).thenReturn(allBids);
 
-        this.mockMvc.perform(get("/bidList/list"))
+        MvcResult response = mockMvc.perform(get("/bidList/list"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("bidList/list"))
-                .andExpect(model().attribute("allBids",
-                        contains(bidA, bidB)));
+                .andReturn();
+
+        String bidListJson = response.getResponse().getContentAsString();
+
+        assertThat(bidListJson).isEqualTo(
+                objectMapper.writeValueAsString(allBids)
+        );
+
+
     }
 
     @Test
     @WithMockUser
-    public void addAndValidate() throws Exception {
-        BidList bidA = new BidList("account_a", "type_a", 41.5);
+    public void Given_getByIdBidListURI_When_getRequest_Then_returnSpecifiedBidList() throws Exception {
+        BidList askedBid = new BidList("account_a", "type_a", 42.3);
 
-        when(bidListService.findById(1)).thenReturn(bidA);
+        when(bidListService.findById(2)).thenReturn(askedBid);
 
-        this.mockMvc.perform(get("/bidList/add"))
+        MvcResult response = mockMvc.perform(get("/bidList")
+                .param("bidListId", "2"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("bidList/add"));
+                .andReturn();
 
-        this.mockMvc.perform(post("/bidList/validate")
-                .param("account", "")
-                .param("type", bidA.getType())
-                .param("bidQuantity", bidA.getBidQuantity().toString())
-                .with(csrf()))
-                .andExpect(status().isOk())
-                .andExpect(view().name("bidList/add"))
-                .andExpect(model().hasErrors());
+        String bidJson = response.getResponse().getContentAsString();
 
-        when(bidListService.save(any(BidList.class))).thenReturn(bidA);
-
-        this.mockMvc.perform(post("/bidList/validate")
-                .param("account", bidA.getAccount())
-                .param("type", bidA.getType())
-                .param("bidQuantity", bidA.getBidQuantity().toString())
-                .with(csrf()))
-                .andExpect(status().isFound())
-                .andExpect(view().name("redirect:/bidList/list"))
-                .andExpect(model().hasNoErrors());
+        assertThat(bidJson).isEqualTo(
+                objectMapper.writeValueAsString(askedBid)
+        );
     }
 
     @Test
     @WithMockUser
-    public void update() throws Exception {
-        BidList bidA = new BidList("account_a", "type_a", 41.5);
+    public void Given_addBidListURI_When_postRequest_Then_returnAddedBidList() throws Exception {
+        BidList addedBid = new BidList("account_a", "type_a", 42.3);
 
-        when(bidListService.findById(1)).thenReturn(bidA);
+        when(bidListService.save(any(BidList.class))).thenReturn(addedBid);
 
-        this.mockMvc.perform(get("/bidList/update/1"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("bidList/update"))
-                .andExpect(model().attribute("bidList",
-                        equalTo(bidA)));
+        MvcResult response = mockMvc.perform(post("/bidList/add")
+                .param("account", addedBid.getAccount())
+                .param("type", addedBid.getType())
+                .param("bidQuantity", addedBid.getBidQuantity().toString()))
+                .andExpect(status().isCreated())
+                .andReturn();
 
-        this.mockMvc.perform(get("/bidList/update"))
-                .andExpect(status().isNotFound());
+        String bidJson = response.getResponse().getContentAsString();
 
-        this.mockMvc.perform(post("/bidList/update/1")
-                .param("account", bidA.getAccount())
-                .param("type", bidA.getType())
-                .param("bidQuantity", "-41.5")
-                .with(csrf()))
-                .andExpect(status().isOk())
-                .andExpect(view().name("bidList/update"))
-                .andExpect(model().hasErrors());
-
-        this.mockMvc.perform(post("/bidList/update/1")
-                .param("account", bidA.getAccount())
-                .param("type", bidA.getType())
-                .param("bidQuantity", bidA.getBidQuantity().toString())
-                .with(csrf()))
-                .andExpect(status().isFound())
-                .andExpect(view().name("redirect:/bidList/list"))
-                .andExpect(model().hasNoErrors());
+        assertThat(bidJson).isEqualTo(
+                objectMapper.writeValueAsString(addedBid)
+        );
     }
 
     @Test
     @WithMockUser
-    public void delete() throws Exception {
+    public void Given_updateBidListURI_When_putRequest_Then_returnUpdatedBidList() throws Exception {
+        BidList updatedBid = new BidList("account_a", "type_a", 42.3);
 
-        this.mockMvc.perform(get("/bidList/delete")
-                .with(csrf()))
-                .andExpect(status().isNotFound());
+        when(bidListService.update(1, any(BidList.class))).thenReturn(updatedBid);
 
-        this.mockMvc.perform(get("/bidList/delete/1")
-                .with(csrf()))
-                .andExpect(status().isFound())
-                .andExpect(view().name("redirect:/bidList/list"))
-                .andExpect(model().hasNoErrors());
+        MvcResult response = mockMvc.perform(put("/bidList/update")
+                .param("bidListId", "1")
+                .param("account", updatedBid.getAccount())
+                .param("type", updatedBid.getType())
+                .param("bidQuantity", updatedBid.getBidQuantity().toString()))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        String bidJson = response.getResponse().getContentAsString();
+
+        assertThat(bidJson).isEqualTo(
+                objectMapper.writeValueAsString(updatedBid)
+        );
+    }
+
+    @Test
+    @WithMockUser
+    public void Given_deleteBidListURI_When_deleteRequest_Then_returnTrue() throws Exception {
+        doNothing().when(bidListService).delete(1);
+
+        MvcResult response = mockMvc.perform(delete("/bidList/delete")
+                .param("bidListId", "1"))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        String bidJson = response.getResponse().getContentAsString();
+
+        assertThat(bidJson).isEqualTo(
+                objectMapper.writeValueAsString(true)
+        );
     }
 }
