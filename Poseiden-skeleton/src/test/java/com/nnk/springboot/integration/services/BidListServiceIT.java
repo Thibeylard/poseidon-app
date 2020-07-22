@@ -2,6 +2,7 @@ package com.nnk.springboot.integration.services;
 
 import com.nnk.springboot.domain.BidList;
 import com.nnk.springboot.dtos.BidListAddDTO;
+import com.nnk.springboot.dtos.BidListUpdateDTO;
 import com.nnk.springboot.services.BidListService;
 import org.flywaydb.test.FlywayTestExecutionListener;
 import org.flywaydb.test.annotation.FlywayTest;
@@ -15,7 +16,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertThrows;
@@ -34,30 +34,27 @@ public class BidListServiceIT {
     public void bidListServiceTests() {
 
         //BidList Save + Find + Update
-        BidListAddDTO bidForm = new BidListAddDTO("Account Test", "Type Test", 10d);
-        BidList bid = new BidList(bidForm);
-        BidList bidUpdate = new BidList("Account Test", "Other Test", 30d);
-
         int bidsSize = bidListService.findAll().size();
 
-        bidListService.save(bidForm);
-        bidListService.update(bid.getBidListId(), bidUpdate);
+        BidList bidBeforeUpdate = bidListService.save(new BidListAddDTO("Account Test", "Type Test", 10d));
 
-        bid = bidListService.findById(bid.getBidListId());
+        BidList bidUpdated = bidListService.update(new BidListUpdateDTO(bidBeforeUpdate.getBidListId(), "Account Test", "Other Test", 30d));
+
+        bidBeforeUpdate = bidListService.findById(bidBeforeUpdate.getBidListId());
 
         List<BidList> bids = (List<BidList>) bidListService.findAll();
 
         assertThat(bids)
                 .hasSize(bidsSize + 1);
         assertThat(bids.get(bidsSize))
-                .isEqualToComparingFieldByField(bid);
+                .isEqualToComparingFieldByField(bidBeforeUpdate);
 
-        assertThat(bid).isEqualToIgnoringGivenFields(bidUpdate, "BidListId");
+        assertThat(bidBeforeUpdate).isEqualToIgnoringGivenFields(bidUpdated, "BidListId");
 
         //BidList Delete
-        bidListService.delete(bid.getBidListId());
+        bidListService.delete(bidUpdated.getBidListId());
 
-        int bidId = bid.getBidListId();
-        assertThrows(NoSuchElementException.class, () -> bidListService.findById(bidId));
+        int bidId = bidUpdated.getBidListId();
+        assertThrows(IllegalArgumentException.class, () -> bidListService.findById(bidId));
     }
 }

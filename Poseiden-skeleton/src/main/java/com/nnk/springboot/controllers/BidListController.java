@@ -18,9 +18,8 @@ import org.tinylog.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 
 @RestController
@@ -38,7 +37,8 @@ public class BidListController implements BidListAPI {
         this.request = request;
     }
 
-    public ResponseEntity<BidList> addBidList(@ApiParam(value = "DTO used as parameter to add corresponding BidList to database") @Valid @RequestBody BidListAddDTO body
+    public ResponseEntity<BidList> addBidList(@ApiParam(value = "DTO used as parameter to add corresponding BidList to database")
+                                              @Valid @RequestBody BidListAddDTO body
     ) {
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
@@ -54,14 +54,15 @@ public class BidListController implements BidListAPI {
         return new ResponseEntity<BidList>(HttpStatus.NOT_ACCEPTABLE);
     }
 
-    public ResponseEntity<Boolean> deleteBidList(@NotNull @ApiParam(value = "ID of BidList to delete", required = true) @Valid @RequestParam(value = "bidListId", required = true) Integer bidListId
+    public ResponseEntity<Boolean> deleteBidList(@NotNull @ApiParam(value = "ID of BidList to delete", required = true)
+                                                 @Valid @RequestParam(value = "bidListId", required = true) Integer bidListId
     ) {
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
             try {
                 bidListService.delete(bidListId);
                 return new ResponseEntity<Boolean>(true, HttpStatus.OK);
-            } catch (NoSuchElementException e) {
+            } catch (IllegalArgumentException e) {
                 Logger.error("BidList with specified ID not found", e);
                 return new ResponseEntity<Boolean>(HttpStatus.NOT_FOUND);
             } catch (DataAccessException e) {
@@ -77,44 +78,55 @@ public class BidListController implements BidListAPI {
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
             try {
-                return new ResponseEntity<List<BidList>>(objectMapper.readValue("[ {\n  \"bidQuantity\" : 0.6027456183070403,\n  \"side\" : \"side\",\n  \"askQuantity\" : 1.4658129805029452,\n  \"bidListDate\" : \"2000-01-23T04:56:07.000+00:00\",\n  \"revisionDate\" : \"2000-01-23T04:56:07.000+00:00\",\n  \"book\" : \"book\",\n  \"trader\" : \"trader\",\n  \"BidListId\" : 0,\n  \"type\" : \"type\",\n  \"creationDate\" : \"2000-01-23T04:56:07.000+00:00\",\n  \"dealType\" : \"dealType\",\n  \"sourceListId\" : \"sourceListId\",\n  \"benchmark\" : \"benchmark\",\n  \"creationName\" : \"creationName\",\n  \"dealName\" : \"dealName\",\n  \"security\" : \"security\",\n  \"revisionName\" : \"revisionName\",\n  \"ask\" : 5.637376656633329,\n  \"bid\" : 5.962133916683182,\n  \"account\" : \"account\",\n  \"commentary\" : \"commentary\",\n  \"status\" : \"status\"\n}, {\n  \"bidQuantity\" : 0.6027456183070403,\n  \"side\" : \"side\",\n  \"askQuantity\" : 1.4658129805029452,\n  \"bidListDate\" : \"2000-01-23T04:56:07.000+00:00\",\n  \"revisionDate\" : \"2000-01-23T04:56:07.000+00:00\",\n  \"book\" : \"book\",\n  \"trader\" : \"trader\",\n  \"BidListId\" : 0,\n  \"type\" : \"type\",\n  \"creationDate\" : \"2000-01-23T04:56:07.000+00:00\",\n  \"dealType\" : \"dealType\",\n  \"sourceListId\" : \"sourceListId\",\n  \"benchmark\" : \"benchmark\",\n  \"creationName\" : \"creationName\",\n  \"dealName\" : \"dealName\",\n  \"security\" : \"security\",\n  \"revisionName\" : \"revisionName\",\n  \"ask\" : 5.637376656633329,\n  \"bid\" : 5.962133916683182,\n  \"account\" : \"account\",\n  \"commentary\" : \"commentary\",\n  \"status\" : \"status\"\n} ]", List.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                Logger.error("Couldn't serialize response for content type application/json", e);
+                List<BidList> allBids = new ArrayList<>();
+                allBids.addAll(bidListService.findAll());
+                return new ResponseEntity<List<BidList>>(allBids, HttpStatus.OK);
+            } catch (DataAccessException e) {
+                Logger.error("Database could not be reach", e);
                 return new ResponseEntity<List<BidList>>(HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
 
-        return new ResponseEntity<List<BidList>>(HttpStatus.NOT_IMPLEMENTED);
+        return new ResponseEntity<List<BidList>>(HttpStatus.NOT_ACCEPTABLE);
     }
 
-    public ResponseEntity<BidList> getBidList(@NotNull @ApiParam(value = "ID of BidList to find", required = true) @Valid @RequestParam(value = "bidListId", required = true) Integer bidListId
+    public ResponseEntity<BidList> getBidList(@NotNull @ApiParam(value = "ID of BidList to find", required = true)
+                                              @Valid @RequestParam(value = "bidListId", required = true) Integer bidListId
     ) {
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
             try {
-                return new ResponseEntity<BidList>(objectMapper.readValue("{\n  \"bidQuantity\" : 0.6027456183070403,\n  \"side\" : \"side\",\n  \"askQuantity\" : 1.4658129805029452,\n  \"bidListDate\" : \"2000-01-23T04:56:07.000+00:00\",\n  \"revisionDate\" : \"2000-01-23T04:56:07.000+00:00\",\n  \"book\" : \"book\",\n  \"trader\" : \"trader\",\n  \"BidListId\" : 0,\n  \"type\" : \"type\",\n  \"creationDate\" : \"2000-01-23T04:56:07.000+00:00\",\n  \"dealType\" : \"dealType\",\n  \"sourceListId\" : \"sourceListId\",\n  \"benchmark\" : \"benchmark\",\n  \"creationName\" : \"creationName\",\n  \"dealName\" : \"dealName\",\n  \"security\" : \"security\",\n  \"revisionName\" : \"revisionName\",\n  \"ask\" : 5.637376656633329,\n  \"bid\" : 5.962133916683182,\n  \"account\" : \"account\",\n  \"commentary\" : \"commentary\",\n  \"status\" : \"status\"\n}", BidList.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                Logger.error("Couldn't serialize response for content type application/json", e);
+                BidList bidList = bidListService.findById(bidListId);
+                return new ResponseEntity<BidList>(bidList, HttpStatus.OK);
+            } catch (IllegalArgumentException e) {
+                Logger.error("BidList with specified ID not found", e);
+                return new ResponseEntity<BidList>(HttpStatus.NOT_FOUND);
+            } catch (DataAccessException e) {
+                Logger.error("Database could not be reach", e);
                 return new ResponseEntity<BidList>(HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
 
-        return new ResponseEntity<BidList>(HttpStatus.NOT_IMPLEMENTED);
+        return new ResponseEntity<BidList>(HttpStatus.NOT_ACCEPTABLE);
     }
 
-    public ResponseEntity<BidList> updateBidList(@ApiParam(value = "DTO used as parameter to update corresponding BidList to database") @Valid @RequestBody BidListUpdateDTO body
+    public ResponseEntity<BidList> updateBidList(@ApiParam(value = "DTO used as parameter to update corresponding BidList to database")
+                                                 @Valid @RequestBody BidListUpdateDTO body
     ) {
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
             try {
-                return new ResponseEntity<BidList>(objectMapper.readValue("{\n  \"bidQuantity\" : 0.6027456183070403,\n  \"side\" : \"side\",\n  \"askQuantity\" : 1.4658129805029452,\n  \"bidListDate\" : \"2000-01-23T04:56:07.000+00:00\",\n  \"revisionDate\" : \"2000-01-23T04:56:07.000+00:00\",\n  \"book\" : \"book\",\n  \"trader\" : \"trader\",\n  \"BidListId\" : 0,\n  \"type\" : \"type\",\n  \"creationDate\" : \"2000-01-23T04:56:07.000+00:00\",\n  \"dealType\" : \"dealType\",\n  \"sourceListId\" : \"sourceListId\",\n  \"benchmark\" : \"benchmark\",\n  \"creationName\" : \"creationName\",\n  \"dealName\" : \"dealName\",\n  \"security\" : \"security\",\n  \"revisionName\" : \"revisionName\",\n  \"ask\" : 5.637376656633329,\n  \"bid\" : 5.962133916683182,\n  \"account\" : \"account\",\n  \"commentary\" : \"commentary\",\n  \"status\" : \"status\"\n}", BidList.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                Logger.error("Couldn't serialize response for content type application/json", e);
+                BidList bidList = bidListService.update(body);
+                return new ResponseEntity<BidList>(bidList, HttpStatus.OK);
+            } catch (IllegalArgumentException e) {
+                Logger.error("BidList with specified ID not found", e);
+                return new ResponseEntity<BidList>(HttpStatus.NOT_FOUND);
+            } catch (DataAccessException e) {
+                Logger.error("Database could not be reach", e);
                 return new ResponseEntity<BidList>(HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
-
-        return new ResponseEntity<BidList>(HttpStatus.NOT_IMPLEMENTED);
+        return new ResponseEntity<BidList>(HttpStatus.NOT_ACCEPTABLE);
     }
 
 }

@@ -1,6 +1,5 @@
 package com.nnk.springboot.domain;
 
-import com.nnk.springboot.annotations.RangeDouble;
 import com.nnk.springboot.dtos.BidListAddDTO;
 import com.nnk.springboot.dtos.BidListUpdateDTO;
 import lombok.Data;
@@ -9,7 +8,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.validation.constraints.NotBlank;
 import java.sql.Timestamp;
 
 @Entity
@@ -18,11 +16,8 @@ class BidList {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer BidListId;
-    @NotBlank(message = "Account is mandatory")
     private String account;
-    @NotBlank(message = "Type is mandatory")
     private String type;
-    @RangeDouble(min = 0.0)
     private Double bidQuantity;
     private Double askQuantity;
     private Double bid;

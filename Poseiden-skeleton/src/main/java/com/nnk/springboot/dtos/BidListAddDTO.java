@@ -1,67 +1,30 @@
 package com.nnk.springboot.dtos;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import com.nnk.springboot.annotations.RangeDouble;
 import lombok.Data;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotBlank;
 
 /**
  * DTO composed of BidList account, type, and bidQuantity properties
  */
-@ApiModel(description = "DTO composed of BidList account, type, and bidQuantity properties")
 @Validated
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-07-21T09:29:06.402Z[GMT]")
 public @Data
 class BidListAddDTO {
-    @JsonProperty("account")
-    private String account = null;
 
-    @JsonProperty("type")
-    private String type = null;
-
-    @JsonProperty("bidQuantity")
-    private Double bidQuantity = null;
+    @NotBlank(message = "Account is mandatory")
+    private String account;
+    @NotBlank(message = "Type is mandatory")
+    private String type;
+    @RangeDouble(min = 0.0)
+    private Double bidQuantity;
 
     public BidListAddDTO(String account, String type, Double bidQuantity) {
         this.account = account;
         this.type = type;
         this.bidQuantity = bidQuantity;
-    }
-
-    /**
-     * Get account
-     *
-     * @return account
-     **/
-    @ApiModelProperty(required = true, value = "")
-    @NotNull
-    public String getAccount() {
-        return account;
-    }
-
-    /**
-     * Get type
-     *
-     * @return type
-     **/
-    @ApiModelProperty(required = true, value = "")
-    @NotNull
-    public String getType() {
-        return type;
-    }
-
-    /**
-     * Get bidQuantity
-     *
-     * @return bidQuantity
-     **/
-    @ApiModelProperty(required = true, value = "")
-    @NotNull
-    public Double getBidQuantity() {
-        return bidQuantity;
     }
 
     /**
