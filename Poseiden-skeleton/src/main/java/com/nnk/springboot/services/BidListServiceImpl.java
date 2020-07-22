@@ -3,6 +3,7 @@ package com.nnk.springboot.services;
 import com.nnk.springboot.domain.BidList;
 import com.nnk.springboot.dtos.BidListAddDTO;
 import com.nnk.springboot.dtos.BidListUpdateDTO;
+import com.nnk.springboot.exceptions.ResourceIdNotFoundException;
 import com.nnk.springboot.repositories.BidListRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -29,8 +30,8 @@ public class BidListServiceImpl implements BidListService {
     }
 
     @Override
-    public BidList findById(Integer bidListId) throws DataAccessException, IllegalArgumentException {
-        return bidListRepository.findById(bidListId).orElseThrow(IllegalArgumentException::new);
+    public BidList findById(Integer bidListId) throws DataAccessException, ResourceIdNotFoundException {
+        return bidListRepository.findById(bidListId).orElseThrow(() -> new ResourceIdNotFoundException(bidListId));
     }
 
     @Override
@@ -39,8 +40,9 @@ public class BidListServiceImpl implements BidListService {
     }
 
     @Override
-    public BidList update(BidListUpdateDTO bidList) throws DataAccessException, IllegalArgumentException {
-        BidList originalBidList = bidListRepository.findById(bidList.getBidListId()).orElseThrow(IllegalArgumentException::new);
+    public BidList update(BidListUpdateDTO bidList) throws DataAccessException, ResourceIdNotFoundException {
+        int bidListId = bidList.getBidListId();
+        BidList originalBidList = bidListRepository.findById(bidListId).orElseThrow(() -> new ResourceIdNotFoundException(bidListId));
         originalBidList.setAccount(bidList.getAccount());
         originalBidList.setType(bidList.getType());
         originalBidList.setBidQuantity(bidList.getBidQuantity());
@@ -48,7 +50,11 @@ public class BidListServiceImpl implements BidListService {
     }
 
     @Override
-    public void delete(Integer bidListId) throws DataAccessException, IllegalArgumentException {
-        bidListRepository.deleteById(bidListId);
+    public void delete(Integer bidListId) throws DataAccessException, ResourceIdNotFoundException {
+        try {
+            bidListRepository.deleteById(bidListId);
+        } catch (IllegalArgumentException e) {
+            throw new ResourceIdNotFoundException(bidListId);
+        }
     }
 }

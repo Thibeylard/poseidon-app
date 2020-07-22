@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nnk.springboot.domain.BidList;
 import com.nnk.springboot.dtos.BidListAddDTO;
 import com.nnk.springboot.dtos.BidListUpdateDTO;
+import com.nnk.springboot.exceptions.ResourceIdNotFoundException;
 import com.nnk.springboot.services.BidListService;
 import org.junit.Before;
 import org.junit.Test;
@@ -106,7 +107,7 @@ public class BidListControllerTest {
         );
 
         // No element with ID 2 error occurred
-        doThrow(IllegalArgumentException.class).when(bidListService).findById(2);
+        doThrow(new ResourceIdNotFoundException(2)).when(bidListService).findById(2);
 
         mockMvc.perform(get("/bidList")
                 .accept("application/json")
@@ -126,6 +127,7 @@ public class BidListControllerTest {
     @WithMockUser
     public void Given_addBidListURI_When_postRequest_Then_returnBidListServiceValue() throws Exception {
         BidListAddDTO body = new BidListAddDTO("account_a", "type_a", 42.3);
+        BidListAddDTO invalidBody = new BidListAddDTO("", "type_a", 42.3);
         BidList addedBid = new BidList(body);
 
         // Successful save
@@ -145,6 +147,28 @@ public class BidListControllerTest {
         assertThat(bidJson).isEqualTo(
                 objectMapper.writeValueAsString(addedBid)
         );
+
+        // Request does not accept JSON
+
+        mockMvc.perform(post("/bidList/add")
+//                .accept("application/json")
+                .contentType("application/json")
+                .content(objectMapper.writeValueAsString(body))
+                .with(csrf()))
+                .andExpect(status().isNotAcceptable())
+                .andReturn();
+
+        // Invalid DTO
+
+        response = mockMvc.perform(post("/bidList/add")
+                .accept("application/json")
+                .contentType("application/json")
+                .content(objectMapper.writeValueAsString(invalidBody))
+                .with(csrf()))
+                .andExpect(status().isBadRequest())
+                .andReturn();
+
+        System.out.println(response.getResponse().getContentAsString());
 
         // Database error occurred
         doThrow(DataIntegrityViolationException.class).when(bidListService).save(any(BidListAddDTO.class));
@@ -183,7 +207,7 @@ public class BidListControllerTest {
 
         // No element with ID 1 error occurred
 
-        doThrow(IllegalArgumentException.class).when(bidListService).update(any(BidListUpdateDTO.class));
+        doThrow(new ResourceIdNotFoundException(body.getBidListId())).when(bidListService).update(any(BidListUpdateDTO.class));
 
         mockMvc.perform(put("/bidList/update")
                 .accept("application/json")
@@ -227,7 +251,7 @@ public class BidListControllerTest {
 
         // No element with ID 1 error occurred
 
-        doThrow(IllegalArgumentException.class).when(bidListService).delete(1);
+        doThrow(new ResourceIdNotFoundException(1)).when(bidListService).delete(1);
 
         mockMvc.perform(delete("/bidList/delete")
                 .accept("application/json")

@@ -8,14 +8,17 @@ package com.nnk.springboot.controllers;
 import com.nnk.springboot.domain.BidList;
 import com.nnk.springboot.dtos.BidListAddDTO;
 import com.nnk.springboot.dtos.BidListUpdateDTO;
+import com.nnk.springboot.exceptions.ResourceIdNotFoundException;
 import io.swagger.annotations.*;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
@@ -34,7 +37,7 @@ public interface BidListAPI {
             method = RequestMethod.POST)
     ResponseEntity<BidList> addBidList(@ApiParam(value = "DTO used as parameter to add corresponding BidList to database")
                                        @Valid @RequestBody BidListAddDTO body
-    );
+    ) throws HttpMediaTypeNotAcceptableException;
 
 
     @ApiOperation(value = "Remove specified BidList from the database", nickname = "deleteBidList", notes = "", response = Boolean.class, tags = {"users",})
@@ -47,8 +50,8 @@ public interface BidListAPI {
             produces = {"application/json"},
             method = RequestMethod.DELETE)
     ResponseEntity<Boolean> deleteBidList(@NotNull @ApiParam(value = "ID of BidList to delete", required = true)
-                                          @Valid @RequestParam(value = "bidListId", required = true) Integer bidListId
-    );
+                                          @Min(0) @RequestParam(value = "bidListId", required = true) Integer bidListId
+    ) throws ResourceIdNotFoundException, HttpMediaTypeNotAcceptableException;
 
 
     @ApiOperation(value = "Get all BidLists from database.", nickname = "getAllBidLists", notes = "", response = BidList.class, responseContainer = "List", tags = {"users",})
@@ -59,7 +62,7 @@ public interface BidListAPI {
     @RequestMapping(value = "/bidList/list",
             produces = {"application/json"},
             method = RequestMethod.GET)
-    ResponseEntity<List<BidList>> getAllBidLists();
+    ResponseEntity<List<BidList>> getAllBidLists() throws HttpMediaTypeNotAcceptableException;
 
 
     @ApiOperation(value = "Get specified BidList from database.", nickname = "getBidList", notes = "", response = BidList.class, tags = {"users",})
@@ -71,8 +74,9 @@ public interface BidListAPI {
     @RequestMapping(value = "/bidList",
             produces = {"application/json"},
             method = RequestMethod.GET)
-    ResponseEntity<BidList> getBidList(@NotNull @ApiParam(value = "ID of BidList to find", required = true) @Valid @RequestParam(value = "bidListId", required = true) Integer bidListId
-    );
+    ResponseEntity<BidList> getBidList(@NotNull @ApiParam(value = "ID of BidList to find", required = true)
+                                       @Min(0) @RequestParam(value = "bidListId", required = true) Integer bidListId
+    ) throws ResourceIdNotFoundException, HttpMediaTypeNotAcceptableException;
 
 
     @ApiOperation(value = "Update a BidList in the database", nickname = "updateBidList", notes = "", response = BidList.class, tags = {"users",})
@@ -85,7 +89,8 @@ public interface BidListAPI {
             produces = {"application/json"},
             consumes = {"application/json"},
             method = RequestMethod.PUT)
-    ResponseEntity<BidList> updateBidList(@ApiParam(value = "DTO used as parameter to update corresponding BidList to database") @Valid @RequestBody BidListUpdateDTO body
-    );
+    ResponseEntity<BidList> updateBidList(@ApiParam(value = "DTO used as parameter to update corresponding BidList to database")
+                                          @Valid @RequestBody BidListUpdateDTO body
+    ) throws ResourceIdNotFoundException, HttpMediaTypeNotAcceptableException;
 
 }

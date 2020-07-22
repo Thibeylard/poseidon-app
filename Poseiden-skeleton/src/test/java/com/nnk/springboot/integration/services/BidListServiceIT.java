@@ -3,6 +3,7 @@ package com.nnk.springboot.integration.services;
 import com.nnk.springboot.domain.BidList;
 import com.nnk.springboot.dtos.BidListAddDTO;
 import com.nnk.springboot.dtos.BidListUpdateDTO;
+import com.nnk.springboot.exceptions.ResourceIdNotFoundException;
 import com.nnk.springboot.services.BidListService;
 import org.flywaydb.test.FlywayTestExecutionListener;
 import org.flywaydb.test.annotation.FlywayTest;
@@ -31,7 +32,7 @@ public class BidListServiceIT {
 
     @Test
     @FlywayTest
-    public void bidListServiceTests() {
+    public void bidListServiceTests() throws ResourceIdNotFoundException {
 
         //BidList Save + Find + Update
         int bidsSize = bidListService.findAll().size();
@@ -55,6 +56,6 @@ public class BidListServiceIT {
         bidListService.delete(bidUpdated.getBidListId());
 
         int bidId = bidUpdated.getBidListId();
-        assertThrows(IllegalArgumentException.class, () -> bidListService.findById(bidId));
+        assertThrows(ResourceIdNotFoundException.class, () -> bidListService.findById(bidId));
     }
 }
