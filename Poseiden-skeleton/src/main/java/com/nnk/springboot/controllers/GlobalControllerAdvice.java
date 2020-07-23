@@ -6,10 +6,10 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
+import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.tinylog.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,14 +19,17 @@ public class GlobalControllerAdvice {
 
     @ExceptionHandler(ResourceIdNotFoundException.class)
     public ResponseEntity<String> handleResourceIdNotFound(ResourceIdNotFoundException e) {
-        Logger.error(e.getMessage());
         return new ResponseEntity<>("Requested resource with ID " + e.getInvalidID() + "does not exist", HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(DataAccessException.class)
     public ResponseEntity<String> handleDataAccessException(DataAccessException e) {
-        Logger.error(e.getMessage());
         return new ResponseEntity<>("Sorry, an error occurred.", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(HttpMediaTypeNotAcceptableException.class)
+    public ResponseEntity<String> handleHttpMediaTypeNotAcceptableException(HttpMediaTypeNotAcceptableException e) {
+        return new ResponseEntity<>("API can only return application/json mediatype format.", HttpStatus.NOT_ACCEPTABLE);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

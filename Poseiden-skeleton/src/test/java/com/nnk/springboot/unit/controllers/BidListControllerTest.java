@@ -155,20 +155,16 @@ public class BidListControllerTest {
                 .contentType("application/json")
                 .content(objectMapper.writeValueAsString(body))
                 .with(csrf()))
-                .andExpect(status().isNotAcceptable())
-                .andReturn();
+                .andExpect(status().isNotAcceptable());
 
         // Invalid DTO
 
-        response = mockMvc.perform(post("/bidList/add")
+        mockMvc.perform(post("/bidList/add")
                 .accept("application/json")
                 .contentType("application/json")
                 .content(objectMapper.writeValueAsString(invalidBody))
                 .with(csrf()))
-                .andExpect(status().isBadRequest())
-                .andReturn();
-
-        System.out.println(response.getResponse().getContentAsString());
+                .andExpect(status().isBadRequest());
 
         // Database error occurred
         doThrow(DataIntegrityViolationException.class).when(bidListService).save(any(BidListAddDTO.class));
