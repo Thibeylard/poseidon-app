@@ -31,7 +31,7 @@ public interface BidListAPI {
             @ApiResponse(code = 201, message = "BidList successfully created", response = BidList.class),
             @ApiResponse(code = 400, message = "Invalid input, object invalid"),
             @ApiResponse(code = 405, message = "An error occurred")})
-    @RequestMapping(value = "/bidList/add",
+    @RequestMapping(value = "/api/bidList/add",
             produces = {"application/json"},
             consumes = {"application/json"},
             method = RequestMethod.POST)
@@ -46,7 +46,7 @@ public interface BidListAPI {
             @ApiResponse(code = 400, message = "Invalid input"),
             @ApiResponse(code = 404, message = "BidList with specified ID not found"),
             @ApiResponse(code = 405, message = "An error occurred")})
-    @RequestMapping(value = "/bidList/delete",
+    @RequestMapping(value = "/api/bidList/delete",
             produces = {"application/json"},
             method = RequestMethod.DELETE)
     ResponseEntity<Boolean> deleteBidList(@NotNull @ApiParam(value = "ID of BidList to delete", required = true)
@@ -59,7 +59,7 @@ public interface BidListAPI {
             @ApiResponse(code = 200, message = "All bidLists retrieved", response = BidList.class, responseContainer = "List"),
             @ApiResponse(code = 400, message = "Bad input parameter"),
             @ApiResponse(code = 405, message = "An error occurred")})
-    @RequestMapping(value = "/bidList/list",
+    @RequestMapping(value = "/api/bidList/list",
             produces = {"application/json"},
             method = RequestMethod.GET)
     ResponseEntity<List<BidList>> getAllBidLists() throws HttpMediaTypeNotAcceptableException;
@@ -71,7 +71,7 @@ public interface BidListAPI {
             @ApiResponse(code = 400, message = "Bad input parameter"),
             @ApiResponse(code = 404, message = "BidList not found"),
             @ApiResponse(code = 405, message = "An error occurred")})
-    @RequestMapping(value = "/bidList",
+    @RequestMapping(value = "/api/bidList",
             produces = {"application/json"},
             method = RequestMethod.GET)
     ResponseEntity<BidList> getBidList(@NotNull @ApiParam(value = "ID of BidList to find", required = true)
@@ -85,7 +85,7 @@ public interface BidListAPI {
             @ApiResponse(code = 400, message = "Invalid input, object invalid"),
             @ApiResponse(code = 404, message = "BidList with specified ID not found"),
             @ApiResponse(code = 405, message = "An error occurred")})
-    @RequestMapping(value = "/bidList/update",
+    @RequestMapping(value = "/api/bidList/update",
             produces = {"application/json"},
             consumes = {"application/json"},
             method = RequestMethod.PUT)

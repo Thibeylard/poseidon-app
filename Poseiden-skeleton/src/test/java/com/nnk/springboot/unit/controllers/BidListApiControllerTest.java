@@ -35,7 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @ActiveProfiles("unitTest")
-public class BidListControllerTest {
+public class BidListApiControllerTest {
 
     private MockMvc mockMvc;
     // Beans

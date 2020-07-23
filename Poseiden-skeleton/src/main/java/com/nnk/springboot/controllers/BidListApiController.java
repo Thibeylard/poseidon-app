@@ -24,14 +24,14 @@ import java.util.List;
 
 @org.springframework.web.bind.annotation.RestController
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-07-21T09:29:06.402Z[GMT]")
-public class BidListController implements BidListAPI, RestController {
+public class BidListApiController implements BidListAPI, RestController {
 
     private final BidListService bidListService;
     private final ObjectMapper objectMapper;
     private final HttpServletRequest request;
 
     @Autowired
-    public BidListController(BidListService bidListService, ObjectMapper objectMapper, HttpServletRequest request) {
+    public BidListApiController(BidListService bidListService, ObjectMapper objectMapper, HttpServletRequest request) {
         this.bidListService = bidListService;
         this.objectMapper = objectMapper;
         this.request = request;

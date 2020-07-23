@@ -15,7 +15,7 @@ import javax.validation.constraints.NotNull;
 public @Data
 class BidListUpdateDTO {
     @NotNull
-    private Integer BidListId;
+    private Integer bidListId;
     @NotBlank(message = "Account is mandatory")
     private String account;
     @NotBlank(message = "Type is mandatory")
@@ -23,11 +23,21 @@ class BidListUpdateDTO {
     @RangeDouble(min = 0.0)
     private Double bidQuantity;
 
+    public BidListUpdateDTO() {
+    }
+
     public BidListUpdateDTO(Integer bidListId, String account, String type, Double bidQuantity) {
-        BidListId = bidListId;
+        this.bidListId = bidListId;
         this.account = account;
         this.type = type;
         this.bidQuantity = bidQuantity;
+    }
+
+    public BidListUpdateDTO(BidListUpdateDTO bidList) {
+        this.bidListId = bidList.getBidListId();
+        this.account = bidList.getAccount();
+        this.type = bidList.getType();
+        this.bidQuantity = bidList.getBidQuantity();
     }
 
     /**

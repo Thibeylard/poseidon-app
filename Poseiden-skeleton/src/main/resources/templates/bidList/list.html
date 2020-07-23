@@ -10,7 +10,7 @@
 <div class="container">
 	<div class="row">
 		<div class="col-6">
-			<a href="/bidList/list">Bid List</a>&nbsp;|&nbsp;
+			<a href="/html/bidList/list">Bid List</a>&nbsp;|&nbsp;
 			<a href="/curvePoint/list">Curve Points</a>&nbsp;|&nbsp;
 			<a href="/rating/list">Ratings</a>&nbsp;|&nbsp;
 			<a href="/trade/list">Trade</a>&nbsp;|&nbsp;
@@ -25,30 +25,27 @@
 	</div>
 	<div class="row"><h2>Bid List</h2></div>
 	<div class="row">
-		<a href="/bidList/add" class="btn btn-primary btn-sm">Add New</a>
+		<a class="btn btn-primary btn-sm" href="/html/bidList/add">Add New</a>
 		<table class="table table-bordered">
 			<thead>
-				<tr>
-					<th>Id</th>
-					<th>Account</th>
-					<th>Type</th>
-					<th>Bid Quantity</th>
-					<th>Action</th>
-				</tr>
+			<tr>
+				<th>Id</th>
+				<th>Account</th>
+				<th>Type</th>
+				<th>Bid Quantity</th>
+				<th>Action</th>
+			</tr>
 			</thead>
 			<tbody>
 			<tr th:each="bid : ${allBids}">
-				<td th:text="${bid.BidListId}"></td>
+				<td th:text="${bid.bidListId}"></td>
 				<td th:text="${bid.account}"></td>
 				<td th:text="${bid.type}"></td>
 				<td th:text="${bid.bidQuantity}"></td>
 				<td>
-					<form>
-						<input formmethod="get" th:formaction="@{/bidList/update/{id}(id=${bid.BidListId})}"
-							   type="submit" value="Edit">
-						<input formmethod="get" th:formaction="@{/bidList/delete/{id}(id=${bid.BidListId})}"
-							   type="submit" value="Delete">
-					</form>
+					<a th:href="@{/html/bidList/update/{id}(id=${bid.bidListId})}"><input type="button"
+																						  value="Edit"/></a>
+					<a th:href="@{/html/bidList/delete/{id}(id=${bid.bidListId})}"><input type="button" value="Delete"/></a>
 				</td>
 			</tr>
 			</tbody>

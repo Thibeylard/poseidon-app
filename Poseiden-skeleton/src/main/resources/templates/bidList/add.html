@@ -14,7 +14,8 @@
 	</div>
 
 	<div class="row">
-		<form action="#" th:action="@{/bidList/validate}" th:object="${bidList}" method="post" class="form-horizontal"
+		<form action="#" class="form-horizontal" method="post" th:action="@{/html/bidList/validate}"
+			  th:object="${bidList}"
 			  style="width: 100%">
 			<label th:for="${bidList.account}">Account</label>
 			<input th:field="${bidList.account}" type="text"/><br/>
@@ -27,7 +28,7 @@
 			<div style="color:red" th:if="${#fields.hasErrors('${bidList.bidQuantity}')}">BidQuantity must be greater or
 				equal to 0
 			</div>
-			<a th:href="@{/bidList/list}"><input type="button" value="Cancel"/></a>
+			<a th:href="@{/html/bidList/list}"><input type="button" value="Cancel"/></a>
 			<input type="submit" value="Add BidList"/></input>
 		</form>
 	</div>

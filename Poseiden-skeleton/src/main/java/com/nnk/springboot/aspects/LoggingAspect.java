@@ -26,11 +26,11 @@ public class LoggingAspect {
         this.objectMapper = objectMapper;
     }
 
-    @Pointcut("execution(public * com.nnk.springboot.controllers.*Controller.*(..))")
-    public void requestRestMethods() {
+    @Pointcut("execution(public * com.nnk.springboot.controllers.*ApiController.*(..))")
+    private void apiRequestHttpMethods() {
     }
 
-    @Before("requestRestMethods()")
+    @Before("apiRequestHttpMethods()")
     public void logRestRequest(JoinPoint joinPoint) {
         RestController controller = (RestController) joinPoint.getTarget();
         String method = controller.getRequest().getMethod();
@@ -60,7 +60,7 @@ public class LoggingAspect {
     }
 
 
-    @AfterReturning(value = "requestRestMethods()", returning = "response")
+    @AfterReturning(value = "apiRequestHttpMethods()", returning = "response")
     public void logRestReturns(ResponseEntity<?> response) {
         try {
             Logger.info("Request succeeded and returned {}", objectMapper.writeValueAsString(response.getBody()));
@@ -69,14 +69,14 @@ public class LoggingAspect {
         }
     }
 
-    @AfterThrowing(value = "requestRestMethods()", throwing = "e")
+    @AfterThrowing(value = "apiRequestHttpMethods()", throwing = "e")
     public void logRestExceptions(Exception e) throws Exception {
         Logger.error("Request failed on {} with : {}", e.getClass().getCanonicalName(), e.getMessage());
         throw e;
     }
 
     @Pointcut("execution( * com.nnk.springboot.controllers.GlobalControllerAdvice.*(..))")
-    public void withinGlobalControllerAdvice() {
+    private void withinGlobalControllerAdvice() {
     }
 
     @Before("withinGlobalControllerAdvice() && execution(* handleHttpMediaTypeNotAcceptableException(..))()")
