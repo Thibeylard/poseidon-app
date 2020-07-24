@@ -21,7 +21,7 @@ public class ControllerAspect {
         RestController controller = (RestController) joinPoint.getTarget();
         String accept = controller.getRequest().getHeader("Accept");
 
-        if (accept == null || !accept.contains("application/json")) {
+        if (accept == null || !accept.contains("application/json") || !accept.contains("application/*") || !accept.contains("*/*")) {
             throw new HttpMediaTypeNotAcceptableException("API can only return application/json mediatype format.");
         }
     }

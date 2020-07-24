@@ -2,7 +2,6 @@ package com.nnk.springboot.controllers;
 
 import com.nnk.springboot.dtos.FormErrorDTO;
 import com.nnk.springboot.exceptions.ResourceIdNotFoundException;
-import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -19,13 +18,9 @@ public class GlobalControllerAdvice {
 
     @ExceptionHandler(ResourceIdNotFoundException.class)
     public ResponseEntity<String> handleResourceIdNotFound(ResourceIdNotFoundException e) {
-        return new ResponseEntity<>("Requested resource with ID " + e.getInvalidID() + "does not exist", HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>("Requested resource with ID " + e.getInvalidID() + " does not exist", HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(DataAccessException.class)
-    public ResponseEntity<String> handleDataAccessException(DataAccessException e) {
-        return new ResponseEntity<>("Sorry, an error occurred.", HttpStatus.INTERNAL_SERVER_ERROR);
-    }
 
     @ExceptionHandler(HttpMediaTypeNotAcceptableException.class)
     public ResponseEntity<String> handleHttpMediaTypeNotAcceptableException(HttpMediaTypeNotAcceptableException e) {
@@ -42,5 +37,10 @@ public class GlobalControllerAdvice {
         }
 
         return new ResponseEntity<>(violations, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<String> defaultHandlerException(Exception e) {
+        return new ResponseEntity<>("Sorry, an error occurred.", HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

@@ -17,12 +17,13 @@ import java.util.HashMap;
 
 @Aspect
 @Component
-public class LoggingAspect {
+public class RestLoggingAspect {
 
     private final ObjectMapper objectMapper;
+    private String lastRequestBody;
 
     @Autowired
-    public LoggingAspect(ObjectMapper objectMapper) {
+    public RestLoggingAspect(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
     }
 
@@ -39,8 +40,14 @@ public class LoggingAspect {
         try {
             HashMap<String, String[]> params = new HashMap<>(controller.getRequest().getParameterMap());
             params.keySet().removeIf(key -> key.equals("_csrf"));
-            String body = IOUtils.toString(controller.getRequest().getReader());
             paramJson = objectMapper.writeValueAsString(params);
+
+            String body = "";
+            try {
+                body = IOUtils.toString(controller.getRequest().getReader());
+            } catch (IllegalStateException e) {
+                Logger.debug("Body request already been read.");
+            }
 
             if (!params.isEmpty() && !body.isEmpty()) {
                 Logger.info("{} request on {} with parameters : {} and body {}", method, uri, paramJson, body);
