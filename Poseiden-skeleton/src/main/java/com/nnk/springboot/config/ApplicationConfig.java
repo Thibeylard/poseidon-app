@@ -20,8 +20,6 @@ import org.springframework.transaction.PlatformTransactionManager;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
-import static org.springframework.data.rest.core.mapping.RepositoryDetectionStrategy.RepositoryDetectionStrategies.ANNOTATED;
-
 @Configuration
 public class ApplicationConfig extends RepositoryRestConfigurerAdapter {
 
@@ -36,7 +34,6 @@ public class ApplicationConfig extends RepositoryRestConfigurerAdapter {
     public void configureRepositoryRestConfiguration(RepositoryRestConfiguration repositoryRestConfiguration) {
         repositoryRestConfiguration
                 .setBasePath("/restApi")
-                .setRepositoryDetectionStrategy(ANNOTATED)
                 .setReturnBodyForPutAndPost(true);
         repositoryRestConfiguration.returnBodyOnUpdate("application/json");
         repositoryRestConfiguration.returnBodyOnCreate("application/json");
