@@ -5,5 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 @RepositoryRestResource(collectionResourceRel = "trades", path = "trades")
-public interface TradeRepository extends JpaRepository<Trade, Integer> {
+public interface TradeRestRepository extends JpaRepository<Trade, Integer> {
 }

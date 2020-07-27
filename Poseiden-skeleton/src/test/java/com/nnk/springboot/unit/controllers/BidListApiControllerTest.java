@@ -65,7 +65,7 @@ public class BidListApiControllerTest {
 
         when(bidListService.findAll()).thenReturn(allBids);
 
-        MvcResult response = mockMvc.perform(get("/bidList/list")
+        MvcResult response = mockMvc.perform(get("/api/bidList/list")
                 .accept("application/json"))
                 .andExpect(status().isOk())
                 .andReturn();
@@ -79,7 +79,7 @@ public class BidListApiControllerTest {
         // Database error occurred
         doThrow(DataRetrievalFailureException.class).when(bidListService).findAll();
 
-        mockMvc.perform(get("/bidList/list")
+        mockMvc.perform(get("/api/bidList/list")
                 .accept("application/json"))
                 .andExpect(status().isInternalServerError());
 
@@ -94,7 +94,7 @@ public class BidListApiControllerTest {
 
         when(bidListService.findById(2)).thenReturn(askedBid);
 
-        MvcResult response = mockMvc.perform(get("/bidList")
+        MvcResult response = mockMvc.perform(get("/api/bidList")
                 .accept("application/json")
                 .param("bidListId", "2"))
                 .andExpect(status().isOk())
@@ -109,7 +109,7 @@ public class BidListApiControllerTest {
         // No element with ID 2 error occurred
         doThrow(new ResourceIdNotFoundException(2)).when(bidListService).findById(2);
 
-        mockMvc.perform(get("/bidList")
+        mockMvc.perform(get("/api/bidList")
                 .accept("application/json")
                 .param("bidListId", "2"))
                 .andExpect(status().isNotFound());
@@ -117,7 +117,7 @@ public class BidListApiControllerTest {
         // Database error occurred
         doThrow(DataRetrievalFailureException.class).when(bidListService).findById(2);
 
-        mockMvc.perform(get("/bidList")
+        mockMvc.perform(get("/api/bidList")
                 .accept("application/json")
                 .param("bidListId", "2"))
                 .andExpect(status().isInternalServerError());
@@ -134,7 +134,7 @@ public class BidListApiControllerTest {
 
         when(bidListService.save(any(BidListAddDTO.class))).thenReturn(addedBid);
 
-        MvcResult response = mockMvc.perform(post("/bidList/add")
+        MvcResult response = mockMvc.perform(post("/api/bidList/add")
                 .accept("application/json")
                 .contentType("application/json")
                 .content(objectMapper.writeValueAsString(body))
@@ -150,7 +150,7 @@ public class BidListApiControllerTest {
 
         // Request does not accept JSON
 
-        mockMvc.perform(post("/bidList/add")
+        mockMvc.perform(post("/api/bidList/add")
 //                .accept("application/json")
                 .contentType("application/json")
                 .content(objectMapper.writeValueAsString(body))
@@ -159,7 +159,7 @@ public class BidListApiControllerTest {
 
         // Invalid DTO
 
-        mockMvc.perform(post("/bidList/add")
+        mockMvc.perform(post("/api/bidList/add")
                 .accept("application/json")
                 .contentType("application/json")
                 .content(objectMapper.writeValueAsString(invalidBody))
@@ -169,7 +169,7 @@ public class BidListApiControllerTest {
         // Database error occurred
         doThrow(DataIntegrityViolationException.class).when(bidListService).save(any(BidListAddDTO.class));
 
-        mockMvc.perform(post("/bidList/add")
+        mockMvc.perform(post("/api/bidList/add")
                 .accept("application/json")
                 .contentType("application/json")
                 .content(objectMapper.writeValueAsString(body))
@@ -187,7 +187,7 @@ public class BidListApiControllerTest {
 
         when(bidListService.update(any(BidListUpdateDTO.class))).thenReturn(updatedBid);
 
-        MvcResult response = mockMvc.perform(put("/bidList/update")
+        MvcResult response = mockMvc.perform(put("/api/bidList/update")
                 .accept("application/json")
                 .contentType("application/json")
                 .content(objectMapper.writeValueAsString(body))
@@ -205,7 +205,7 @@ public class BidListApiControllerTest {
 
         doThrow(new ResourceIdNotFoundException(body.getBidListId())).when(bidListService).update(any(BidListUpdateDTO.class));
 
-        mockMvc.perform(put("/bidList/update")
+        mockMvc.perform(put("/api/bidList/update")
                 .accept("application/json")
                 .contentType("application/json")
                 .content(objectMapper.writeValueAsString(body))
@@ -216,7 +216,7 @@ public class BidListApiControllerTest {
 
         doThrow(DataRetrievalFailureException.class).when(bidListService).update(any(BidListUpdateDTO.class));
 
-        mockMvc.perform(put("/bidList/update")
+        mockMvc.perform(put("/api/bidList/update")
                 .accept("application/json")
                 .contentType("application/json")
                 .content(objectMapper.writeValueAsString(body))
@@ -232,7 +232,7 @@ public class BidListApiControllerTest {
 
         doNothing().when(bidListService).delete(1);
 
-        MvcResult response = mockMvc.perform(delete("/bidList/delete")
+        MvcResult response = mockMvc.perform(delete("/api/bidList/delete")
                 .accept("application/json")
                 .param("bidListId", "1")
                 .with(csrf()))
@@ -249,7 +249,7 @@ public class BidListApiControllerTest {
 
         doThrow(new ResourceIdNotFoundException(1)).when(bidListService).delete(1);
 
-        mockMvc.perform(delete("/bidList/delete")
+        mockMvc.perform(delete("/api/bidList/delete")
                 .accept("application/json")
                 .param("bidListId", "1")
                 .with(csrf()))
@@ -259,7 +259,7 @@ public class BidListApiControllerTest {
 
         doThrow(DataRetrievalFailureException.class).when(bidListService).delete(1);
 
-        mockMvc.perform(delete("/bidList/delete")
+        mockMvc.perform(delete("/api/bidList/delete")
                 .accept("application/json")
                 .param("bidListId", "1")
                 .with(csrf()))

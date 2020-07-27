@@ -1,7 +1,7 @@
 package com.nnk.springboot.integration.daos;
 
 import com.nnk.springboot.domain.RuleName;
-import com.nnk.springboot.repositories.RuleNameRepository;
+import com.nnk.springboot.repositories.RuleNameRestRepository;
 import org.flywaydb.test.FlywayTestExecutionListener;
 import org.flywaydb.test.annotation.FlywayTest;
 import org.junit.Assert;
@@ -24,7 +24,7 @@ import java.util.Optional;
 public class RuleRepositoryIT {
 
 	@Autowired
-	private RuleNameRepository ruleNameRepository;
+	private RuleNameRestRepository ruleNameRestRepository;
 
 	@Test
 	@FlywayTest
@@ -32,23 +32,23 @@ public class RuleRepositoryIT {
 		RuleName rule = new RuleName("Rule Name", "Description", "Json", "Template", "SQL", "SQL Part");
 
 		// Save
-		rule = ruleNameRepository.save(rule);
+		rule = ruleNameRestRepository.save(rule);
 		Assert.assertNotNull(rule.getId());
-		Assert.assertTrue(rule.getName().equals("Rule Name"));
+		Assert.assertEquals("Rule Name", rule.getName());
 
 		// Update
 		rule.setName("Rule Name Update");
-		rule = ruleNameRepository.save(rule);
-		Assert.assertTrue(rule.getName().equals("Rule Name Update"));
+		rule = ruleNameRestRepository.save(rule);
+		Assert.assertEquals("Rule Name Update", rule.getName());
 
 		// Find
-		List<RuleName> listResult = ruleNameRepository.findAll();
+		List<RuleName> listResult = ruleNameRestRepository.findAll();
 		Assert.assertTrue(listResult.size() > 0);
 
 		// Delete
 		Integer id = rule.getId();
-		ruleNameRepository.delete(rule);
-		Optional<RuleName> ruleList = ruleNameRepository.findById(id);
+		ruleNameRestRepository.delete(rule);
+		Optional<RuleName> ruleList = ruleNameRestRepository.findById(id);
 		Assert.assertFalse(ruleList.isPresent());
 	}
 }

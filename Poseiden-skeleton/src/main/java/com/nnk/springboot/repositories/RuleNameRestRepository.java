@@ -5,5 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 @RepositoryRestResource(collectionResourceRel = "rules", path = "rules")
-public interface RuleNameRepository extends JpaRepository<RuleName, Integer> {
+public interface RuleNameRestRepository extends JpaRepository<RuleName, Integer> {
 }

@@ -1,7 +1,7 @@
 package com.nnk.springboot.integration.daos;
 
 import com.nnk.springboot.domain.Trade;
-import com.nnk.springboot.repositories.TradeRepository;
+import com.nnk.springboot.repositories.TradeRestRepository;
 import org.flywaydb.test.FlywayTestExecutionListener;
 import org.flywaydb.test.annotation.FlywayTest;
 import org.junit.Assert;
@@ -21,10 +21,10 @@ import java.util.Optional;
 @SpringBootTest
 @TestExecutionListeners({DependencyInjectionTestExecutionListener.class, FlywayTestExecutionListener.class})
 @ActiveProfiles("testH2")
-public class TradeRepositoryIT {
+public class TradeRestRepositoryIT {
 
 	@Autowired
-	private TradeRepository tradeRepository;
+	private TradeRestRepository tradeRestRepository;
 
 	@Test
 	@FlywayTest
@@ -32,23 +32,23 @@ public class TradeRepositoryIT {
 		Trade trade = new Trade("Trade Account", "Type");
 
 		// Save
-		trade = tradeRepository.save(trade);
+		trade = tradeRestRepository.save(trade);
 		Assert.assertNotNull(trade.getTradeId());
-		Assert.assertTrue(trade.getAccount().equals("Trade Account"));
+		Assert.assertEquals("Trade Account", trade.getAccount());
 
 		// Update
 		trade.setAccount("Trade Account Update");
-		trade = tradeRepository.save(trade);
-		Assert.assertTrue(trade.getAccount().equals("Trade Account Update"));
+		trade = tradeRestRepository.save(trade);
+		Assert.assertEquals("Trade Account Update", trade.getAccount());
 
 		// Find
-		List<Trade> listResult = tradeRepository.findAll();
+		List<Trade> listResult = tradeRestRepository.findAll();
 		Assert.assertTrue(listResult.size() > 0);
 
 		// Delete
 		Integer id = trade.getTradeId();
-		tradeRepository.delete(trade);
-		Optional<Trade> tradeList = tradeRepository.findById(id);
+		tradeRestRepository.delete(trade);
+		Optional<Trade> tradeList = tradeRestRepository.findById(id);
 		Assert.assertFalse(tradeList.isPresent());
 	}
 }
