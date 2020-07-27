@@ -1,7 +1,7 @@
 package com.nnk.springboot.integration.daos;
 
-import com.nnk.springboot.domain.Trade;
-import com.nnk.springboot.repositories.TradeRestRepository;
+import com.nnk.springboot.domain.CurvePoint;
+import com.nnk.springboot.repositories.CurvePointRestRepository;
 import org.flywaydb.test.FlywayTestExecutionListener;
 import org.flywaydb.test.annotation.FlywayTest;
 import org.junit.Assert;
@@ -21,34 +21,35 @@ import java.util.Optional;
 @SpringBootTest
 @TestExecutionListeners({DependencyInjectionTestExecutionListener.class, FlywayTestExecutionListener.class})
 @ActiveProfiles("testH2")
-public class TradeRestRepositoryIT {
+public class CurvePointRepositoryIT {
 
 	@Autowired
-	private TradeRestRepository tradeRestRepository;
+	private CurvePointRestRepository curvePointRestRepository;
 
 	@Test
 	@FlywayTest
-	public void tradeTest() {
-		Trade trade = new Trade("Trade Account", "Type");
+	public void curvePointTest() {
+		CurvePoint curvePoint = new CurvePoint(10, 10d, 30d);
 
 		// Save
-		trade = tradeRestRepository.save(trade);
-		Assert.assertNotNull(trade.getTradeId());
-		Assert.assertEquals("Trade Account", trade.getAccount());
+		curvePoint = curvePointRestRepository.save(curvePoint);
+		Assert.assertNotNull(curvePoint.getId());
+		Assert.assertEquals(10, (int) curvePoint.getCurveId());
 
 		// Update
-		trade.setAccount("Trade Account Update");
-		trade = tradeRestRepository.save(trade);
-		Assert.assertEquals("Trade Account Update", trade.getAccount());
+		curvePoint.setCurveId(20);
+		curvePoint = curvePointRestRepository.save(curvePoint);
+		Assert.assertEquals(20, (int) curvePoint.getCurveId());
 
 		// Find
-		List<Trade> listResult = tradeRestRepository.findAll();
+		List<CurvePoint> listResult = curvePointRestRepository.findAll();
 		Assert.assertTrue(listResult.size() > 0);
 
 		// Delete
-		Integer id = trade.getTradeId();
-		tradeRestRepository.delete(trade);
-		Optional<Trade> tradeList = tradeRestRepository.findById(id);
-		Assert.assertFalse(tradeList.isPresent());
+		Integer id = curvePoint.getId();
+		curvePointRestRepository.delete(curvePoint);
+		Optional<CurvePoint> curvePointList = curvePointRestRepository.findById(id);
+		Assert.assertFalse(curvePointList.isPresent());
 	}
+
 }

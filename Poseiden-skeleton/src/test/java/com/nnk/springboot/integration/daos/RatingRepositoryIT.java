@@ -21,7 +21,7 @@ import java.util.Optional;
 @SpringBootTest
 @TestExecutionListeners({DependencyInjectionTestExecutionListener.class, FlywayTestExecutionListener.class})
 @ActiveProfiles("testH2")
-public class RatingRestRepositoryIT {
+public class RatingRepositoryIT {
 
 	@Autowired
 	private RatingRestRepository ratingRestRepository;

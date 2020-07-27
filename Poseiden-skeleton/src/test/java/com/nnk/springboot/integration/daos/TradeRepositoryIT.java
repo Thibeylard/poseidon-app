@@ -1,7 +1,7 @@
 package com.nnk.springboot.integration.daos;
 
-import com.nnk.springboot.domain.CurvePoint;
-import com.nnk.springboot.repositories.CurvePointRestRepository;
+import com.nnk.springboot.domain.Trade;
+import com.nnk.springboot.repositories.TradeRestRepository;
 import org.flywaydb.test.FlywayTestExecutionListener;
 import org.flywaydb.test.annotation.FlywayTest;
 import org.junit.Assert;
@@ -21,35 +21,34 @@ import java.util.Optional;
 @SpringBootTest
 @TestExecutionListeners({DependencyInjectionTestExecutionListener.class, FlywayTestExecutionListener.class})
 @ActiveProfiles("testH2")
-public class CurvePointRestRepositoryIT {
+public class TradeRepositoryIT {
 
 	@Autowired
-	private CurvePointRestRepository curvePointRestRepository;
+	private TradeRestRepository tradeRestRepository;
 
 	@Test
 	@FlywayTest
-	public void curvePointTest() {
-		CurvePoint curvePoint = new CurvePoint(10, 10d, 30d);
+	public void tradeTest() {
+		Trade trade = new Trade("Trade Account", "Type");
 
 		// Save
-		curvePoint = curvePointRestRepository.save(curvePoint);
-		Assert.assertNotNull(curvePoint.getId());
-		Assert.assertEquals(10, (int) curvePoint.getCurveId());
+		trade = tradeRestRepository.save(trade);
+		Assert.assertNotNull(trade.getTradeId());
+		Assert.assertEquals("Trade Account", trade.getAccount());
 
 		// Update
-		curvePoint.setCurveId(20);
-		curvePoint = curvePointRestRepository.save(curvePoint);
-		Assert.assertEquals(20, (int) curvePoint.getCurveId());
+		trade.setAccount("Trade Account Update");
+		trade = tradeRestRepository.save(trade);
+		Assert.assertEquals("Trade Account Update", trade.getAccount());
 
 		// Find
-		List<CurvePoint> listResult = curvePointRestRepository.findAll();
+		List<Trade> listResult = tradeRestRepository.findAll();
 		Assert.assertTrue(listResult.size() > 0);
 
 		// Delete
-		Integer id = curvePoint.getId();
-		curvePointRestRepository.delete(curvePoint);
-		Optional<CurvePoint> curvePointList = curvePointRestRepository.findById(id);
-		Assert.assertFalse(curvePointList.isPresent());
+		Integer id = trade.getTradeId();
+		tradeRestRepository.delete(trade);
+		Optional<Trade> tradeList = tradeRestRepository.findById(id);
+		Assert.assertFalse(tradeList.isPresent());
 	}
-
 }

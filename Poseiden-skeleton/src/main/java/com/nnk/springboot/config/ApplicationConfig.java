@@ -4,9 +4,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
+import com.nnk.springboot.validators.BidListValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.rest.core.config.RepositoryRestConfiguration;
+import org.springframework.data.rest.webmvc.config.RepositoryRestConfigurerAdapter;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
@@ -17,8 +20,27 @@ import org.springframework.transaction.PlatformTransactionManager;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
+import static org.springframework.data.rest.core.mapping.RepositoryDetectionStrategy.RepositoryDetectionStrategies.ANNOTATED;
+
 @Configuration
-public class ApplicationConfig {
+public class ApplicationConfig extends RepositoryRestConfigurerAdapter {
+
+    // BidList Repository Validator for SpringDataRest
+    @Bean
+    public BidListValidator beforeCreateBidListValidator() {
+        return new BidListValidator();
+    }
+
+    // Sprint Data Rest Repository Configuration
+    @Override
+    public void configureRepositoryRestConfiguration(RepositoryRestConfiguration repositoryRestConfiguration) {
+        repositoryRestConfiguration
+                .setBasePath("/restApi")
+                .setRepositoryDetectionStrategy(ANNOTATED)
+                .setReturnBodyForPutAndPost(true);
+        repositoryRestConfiguration.returnBodyOnUpdate("application/json");
+        repositoryRestConfiguration.returnBodyOnCreate("application/json");
+    }
 
     // Jpa Entity Manager
     @Bean

@@ -7,6 +7,7 @@ import org.apache.commons.io.IOUtils;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.rest.core.RepositoryConstraintViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -96,5 +97,11 @@ public class RestLoggingAspect {
     public void logValidationRestException(JoinPoint joinPoint) throws Exception {
         MethodArgumentNotValidException e = (MethodArgumentNotValidException) joinPoint.getArgs()[0];
         Logger.error("Request aborted on invalid arguments : {} ", e.getBindingResult().getFieldErrors());
+    }
+
+    @Before("withinGlobalControllerAdvice() && execution(* handleRepositoryConstraintViolationException(..))")
+    public void logRepositoryValidationRestException(JoinPoint joinPoint) throws Exception {
+        RepositoryConstraintViolationException e = (RepositoryConstraintViolationException) joinPoint.getArgs()[0];
+        Logger.error("Request aborted on invalid arguments : {} ", e.getErrors().getFieldErrors());
     }
 }
