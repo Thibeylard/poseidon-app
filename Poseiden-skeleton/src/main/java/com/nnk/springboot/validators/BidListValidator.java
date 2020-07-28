@@ -25,7 +25,7 @@ public class BidListValidator implements Validator {
         }
 
         if (bidList.getBidQuantity() == null || !doubleValidator.minValue(bidList.getBidQuantity(), 0)) {
-            errors.rejectValue("bidQuantity", "wrongValue", "bidQuantity must be positive");
+            errors.rejectValue("bidQuantity", "wrongValue", "BidQuantity must be positive");
         }
     }
 }

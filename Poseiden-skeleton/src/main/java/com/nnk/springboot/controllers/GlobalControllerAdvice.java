@@ -14,6 +14,8 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -68,36 +70,66 @@ public class GlobalControllerAdvice {
     }
 
     /**
-     * RepositoryConstraintViolationException and MethodArgumentNotValidException common Handler
+     * ConstraintViolationException Handler
      *
-     * @param e RepositoryConstraintViolationException or MethodArgumentNotValidException
+     * @param e ConstraintViolationException
      * @return Error description and Status Code
      */
-    @ExceptionHandler({RepositoryConstraintViolationException.class, MethodArgumentNotValidException.class})
-    public ResponseEntity<ValidationErrorDTO> handleRepositoryConstraintViolationException(Exception e) {
-        List<FieldError> errors;
-
-        if (e.getClass().equals(RepositoryConstraintViolationException.class)) {
-            RepositoryConstraintViolationException e1 = (RepositoryConstraintViolationException) e;
-            errors = e1.getErrors().getFieldErrors();
-        } else {
-            MethodArgumentNotValidException e1 = (MethodArgumentNotValidException) e;
-            errors = e1.getBindingResult().getFieldErrors();
-        }
-
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<ValidationErrorDTO> handleConstraintViolationException(ConstraintViolationException e) {
         List<ValidationFieldErrorDTO> fieldErrors = new ArrayList<>();
 
-        for (FieldError err : errors) {
-            fieldErrors.add(new ValidationFieldErrorDTO(err.getField(), err.getRejectedValue(), err.getDefaultMessage()));
-        }
+        for (ConstraintViolation<?> err : e.getConstraintViolations())
+            fieldErrors.add(new ValidationFieldErrorDTO(err));
 
-        ValidationErrorDTO error = new ValidationErrorDTO(
+        return new ResponseEntity<>(getValidationErrorDTO(fieldErrors), HttpStatus.BAD_REQUEST);
+    }
+
+    /**
+     * MethodArgumentNotValidException Handler
+     *
+     * @param e MethodArgumentNotValidException
+     * @return Error description and Status Code
+     */
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ValidationErrorDTO> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+        List<ValidationFieldErrorDTO> fieldErrors = new ArrayList<>();
+
+        for (FieldError err : e.getBindingResult().getFieldErrors())
+            fieldErrors.add(new ValidationFieldErrorDTO(err));
+
+        return new ResponseEntity<>(getValidationErrorDTO(fieldErrors), HttpStatus.BAD_REQUEST);
+    }
+
+    /**
+     * RepositoryConstraintViolationException Handler
+     *
+     * @param e RepositoryConstraintViolationException
+     * @return Error description and Status Code
+     */
+    @ExceptionHandler(RepositoryConstraintViolationException.class)
+    public ResponseEntity<ValidationErrorDTO> handleRepositoryConstraintViolationException(RepositoryConstraintViolationException e) {
+        List<ValidationFieldErrorDTO> fieldErrors = new ArrayList<>();
+
+        for (FieldError err : e.getErrors().getFieldErrors())
+            fieldErrors.add(new ValidationFieldErrorDTO(err));
+
+        return new ResponseEntity<>(getValidationErrorDTO(fieldErrors), HttpStatus.BAD_REQUEST);
+    }
+
+    /**
+     * Return ValidationErrorDTO based on FieldError List
+     *
+     * @param errors List of FieldError
+     * @return Error description as ValidationErrorDTO
+     */
+    private ValidationErrorDTO getValidationErrorDTO(List<ValidationFieldErrorDTO> errors) {
+
+        return new ValidationErrorDTO(
                 HttpStatus.BAD_REQUEST.value(),
                 HttpStatus.BAD_REQUEST.name(),
                 "Object has invalid values",
-                fieldErrors);
-
-        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+                errors);
     }
 
 }
