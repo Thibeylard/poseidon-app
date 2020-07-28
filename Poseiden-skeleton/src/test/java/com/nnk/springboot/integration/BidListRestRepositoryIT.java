@@ -1,9 +1,8 @@
 package com.nnk.springboot.integration;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nnk.springboot.domain.BidList;
-import com.nnk.springboot.dtos.BidListAddDTO;
-import com.nnk.springboot.dtos.BidListUpdateDTO;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -44,107 +43,111 @@ public class BidListRestRepositoryIT {
 
     @Test
     @WithMockUser
-    public void Given_getAllBidListURI_When_getRequest_Then_returnAllBidLists() throws Exception {
+    public void setOfOperations() throws Exception {
 
-        //Successful request
-        MvcResult response = mockMvc.perform(get("/restApi/bidLists")
+        JsonNode bodyResponse;
+
+        //Get all BidLists
+        mockMvc.perform(get("/restApi/bidLists")
+                .accept("application/*"))
+                .andExpect(status().isOk());
+
+
+        //Get BidList 1
+        MvcResult response = mockMvc.perform(get("/restApi/bidLists/1")
                 .accept("application/*"))
                 .andExpect(status().isOk())
                 .andReturn();
 
-    }
+        bodyResponse = objectMapper.reader().readTree(response.getResponse().getContentAsString());
+        assertThat(bodyResponse.get("bidListId").asInt())
+                .isEqualTo(1);
 
-    @Test
-    @WithMockUser
-    public void Given_getByIdBidListURI_When_getRequest_Then_returnSpecifiedBidList() throws Exception {
-        //Successful request
-        mockMvc.perform(get("/restApi/bidLists/1")
+        // No BidList 85 : Not Found
+        response = mockMvc.perform(get("/restApi/bidLists/85")
                 .accept("application/*"))
-                .andExpect(status().isOk());
+                .andExpect(status().isNotFound())
+                .andReturn();
 
-        // No element with ID 85 error occurred
-        mockMvc.perform(get("/restApi/bidLists/85")
-                .accept("application/*"))
-                .andExpect(status().isNotFound());
+        assertThat(response.getResponse().getContentAsString())
+                .isEmpty();
 
-    }
+        // Add new bidList
 
-    @Test
-    @WithMockUser
-    public void Given_addBidListURI_When_postRequest_Then_returnBidListServiceValue() throws Exception {
-        BidListAddDTO body = new BidListAddDTO("account_a", "type_a", 42.3);
-        BidListAddDTO invalidBody = new BidListAddDTO("", "type_a", 42.3);
-        BidList addedBid = new BidList(body);
+        BidList addedBid = new BidList("account_x", "type_x", 65.4);
+        BidList invalidBid = new BidList("account_x", "", 65.4);
 
-        // Successful save
-
-        MvcResult response = mockMvc.perform(post("/restApi/bidLists")
+        response = mockMvc.perform(post("/restApi/bidLists")
                 .accept("application/*")
-                .content(objectMapper.writeValueAsString(body))
+                .content(objectMapper.writeValueAsString(addedBid))
                 .with(csrf()))
                 .andExpect(status().isCreated())
                 .andReturn();
 
-        String bidJson = response.getResponse().getContentAsString();
-
-        System.out.println(bidJson);
-
-        assertThat(bidJson)
-                .isNotEmpty();
+        bodyResponse = objectMapper.reader().readTree(response.getResponse().getContentAsString());
+        assertThat(bodyResponse.get("account").asText())
+                .isEqualTo(addedBid.getAccount());
+        assertThat(bodyResponse.get("type").asText())
+                .isEqualTo(addedBid.getType());
+        assertThat(bodyResponse.get("bidQuantity").asDouble())
+                .isEqualTo(addedBid.getBidQuantity());
 
         // Invalid DTO
 
         mockMvc.perform(post("/restApi/bidLists")
                 .accept("application/*")
-                .content(objectMapper.writeValueAsString(invalidBody))
+                .content(objectMapper.writeValueAsString(invalidBid))
                 .with(csrf()))
                 .andExpect(status().isBadRequest());
-    }
 
-    @Test
-    @WithMockUser
-    public void Given_updateBidListURI_When_putRequest_Then_returnUpdatedBidList() throws Exception {
-        BidListUpdateDTO body = new BidListUpdateDTO(1, "account_a", "type_a", 42.3);
-        BidList updatedBid = new BidList(body);
 
-        // Successful request
-        MvcResult response = mockMvc.perform(put("/restApi/bidLists/1")
+        // Successful partial update on bidlist 1
+
+        BidList updateBid = new BidList("account_a", "type_a", 42.3);
+
+        response = mockMvc.perform(patch("/restApi/bidLists/1")
                 .accept("application/*")
-                .content(objectMapper.writeValueAsString(body))
+                .content(objectMapper.writeValueAsString(updateBid))
+                .with(csrf()))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        bodyResponse = objectMapper.reader().readTree(response.getResponse().getContentAsString());
+        assertThat(bodyResponse.get("bidListId").asInt())
+                .isEqualTo(1);
+        assertThat(bodyResponse.get("bidQuantity").asDouble())
+                .isEqualTo(updateBid.getBidQuantity());
+
+        // Put ID 86
+        // Creates a resource identical to bid except with next generated ID
+        response = mockMvc.perform(put("/restApi/bidLists/86")
+                .accept("application/*")
+                .content(objectMapper.writeValueAsString(updateBid))
                 .with(csrf()))
                 .andExpect(status().isCreated())
                 .andReturn();
 
-        String bidJson = response.getResponse().getContentAsString();
-        System.out.println(bidJson);
-        assertThat(bidJson)
-                .isNotEmpty();
+        bodyResponse = objectMapper.reader().readTree(response.getResponse().getContentAsString());
+        int putBidId = bodyResponse.get("bidListId").asInt();
+        assertThat(bodyResponse.get("account").asText())
+                .isEqualTo(updateBid.getAccount());
+        assertThat(bodyResponse.get("type").asText())
+                .isEqualTo(updateBid.getType());
+        assertThat(bodyResponse.get("bidQuantity").asDouble())
+                .isEqualTo(updateBid.getBidQuantity());
 
-        // Put ID 86
-        mockMvc.perform(put("/restApi/bidLists/86")
-                .accept("application/*")
-                .content(objectMapper.writeValueAsString(body))
-                .with(csrf()))
-                .andExpect(status().isCreated());
-    }
-
-    @Test
-    @WithMockUser
-    public void Given_deleteBidListURI_When_deleteRequest_Then_returnTrue() throws Exception {
-
-        // Successful request
-        MvcResult response = mockMvc.perform(delete("/restApi/bidLists/1")
+        // Successful Delete of bidList with last put ID
+        response = mockMvc.perform(delete("/restApi/bidLists/" + putBidId)
                 .accept("application/*")
                 .with(csrf()))
                 .andExpect(status().isNoContent())
                 .andReturn();
 
-        String bidJson = response.getResponse().getContentAsString();
-
-        System.out.println(bidJson);
+        assertThat(response.getResponse().getContentAsString())
+                .isEmpty();
 
         // No element with ID 96 error occurred
-        mockMvc.perform(delete("/restApi/bidLists/96")
+        mockMvc.perform(delete("/restApi/bidLists/" + putBidId)
                 .accept("application/*")
                 .with(csrf()))
                 .andExpect(status().isNotFound());

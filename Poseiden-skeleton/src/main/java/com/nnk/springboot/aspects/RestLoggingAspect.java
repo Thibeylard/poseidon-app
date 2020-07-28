@@ -5,7 +5,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nnk.springboot.controllers.RestController;
 import org.apache.commons.io.IOUtils;
 import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.annotation.*;
+import org.aspectj.lang.annotation.AfterReturning;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Before;
+import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.core.RepositoryConstraintViolationException;
 import org.springframework.http.ResponseEntity;
@@ -77,31 +80,41 @@ public class RestLoggingAspect {
         }
     }
 
-    @AfterThrowing(value = "apiRequestHttpMethods()", throwing = "e")
+    /*@AfterThrowing(value = "apiRequestHttpMethods()", throwing = "e")
     public void logRestExceptions(Exception e) throws Exception {
         Logger.error("Request failed on {} with : {}", e.getClass().getCanonicalName(), e.getMessage());
         throw e;
-    }
+    }*/
 
     @Pointcut("execution( * com.nnk.springboot.controllers.GlobalControllerAdvice.*(..))")
     private void withinGlobalControllerAdvice() {
     }
 
-    @Before("withinGlobalControllerAdvice() && execution(* handleHttpMediaTypeNotAcceptableException(..))()")
-    public void logAcceptMediaRestExceptions(JoinPoint joinPoint) throws Exception {
+    @Pointcut("execution(public * *(org.springframework.web.bind.MethodArgumentNotValidException))")
+    private void isMethodArgumentNotValidExceptionHandler() {
+    }
+
+    @Pointcut("execution(public * *(org.springframework.data.rest.core.RepositoryConstraintViolationException))")
+    private void isRepositoryConstraintViolationExceptionHandler() {
+    }
+
+
+    @Before("withinGlobalControllerAdvice() && execution(* *(..)) && !isMethodArgumentNotValidExceptionHandler() && !isRepositoryConstraintViolationExceptionHandler()")
+    public void logGlobalControllerAdvice(JoinPoint joinPoint) {
         Exception e = (Exception) joinPoint.getArgs()[0];
         Logger.error("Request aborted on {} with : {}", e.getClass().getCanonicalName(), e.getMessage());
     }
 
-    @Before("withinGlobalControllerAdvice() && execution(* handleMethodArgumentNotValidException(..))")
-    public void logValidationRestException(JoinPoint joinPoint) throws Exception {
+    @Before("withinGlobalControllerAdvice() && isMethodArgumentNotValidExceptionHandler()")
+    public void logGlobalControllerAdviceValidationRestException(JoinPoint joinPoint) {
         MethodArgumentNotValidException e = (MethodArgumentNotValidException) joinPoint.getArgs()[0];
-        Logger.error("Request aborted on invalid arguments : {} ", e.getBindingResult().getFieldErrors());
+        Logger.error("Request aborted on invalid values : {} ", e.getBindingResult().getFieldErrors());
+
     }
 
-    @Before("withinGlobalControllerAdvice() && execution(* handleRepositoryConstraintViolationException(..))")
-    public void logRepositoryValidationRestException(JoinPoint joinPoint) throws Exception {
+    @Before("withinGlobalControllerAdvice() && isRepositoryConstraintViolationExceptionHandler()")
+    public void logGlobalControllerAdviceRepositoryValidationRestException(JoinPoint joinPoint) {
         RepositoryConstraintViolationException e = (RepositoryConstraintViolationException) joinPoint.getArgs()[0];
-        Logger.error("Request aborted on invalid arguments : {} ", e.getErrors().getFieldErrors());
+        Logger.error("Request aborted on invalid values : {} ", e.getErrors().getFieldErrors());
     }
 }

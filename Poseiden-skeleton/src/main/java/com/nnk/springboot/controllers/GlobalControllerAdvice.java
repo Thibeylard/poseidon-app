@@ -3,6 +3,7 @@ package com.nnk.springboot.controllers;
 import com.nnk.springboot.dtos.FormErrorDTO;
 import com.nnk.springboot.exceptions.ResourceIdNotFoundException;
 import org.springframework.data.rest.core.RepositoryConstraintViolationException;
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -27,6 +28,7 @@ public class GlobalControllerAdvice {
     public ResponseEntity<String> handleResourceIdNotFound(ResourceIdNotFoundException e) {
         return new ResponseEntity<>("Requested resource with ID " + e.getInvalidID() + " does not exist", HttpStatus.NOT_FOUND);
     }
+
 
     /**
      * ApiController HttpMediaTypeNotAcceptableException Handler
@@ -85,4 +87,16 @@ public class GlobalControllerAdvice {
 
         return new ResponseEntity<>(violations, HttpStatus.BAD_REQUEST);
     }
+
+    /**
+     * RestApiController ResourceNotFoundException Handler
+     *
+     * @param e ResourceNotFoundException
+     * @return Error description and Status Code
+     */
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<String> handleResourceNotFound(ResourceNotFoundException e) {
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
 }
