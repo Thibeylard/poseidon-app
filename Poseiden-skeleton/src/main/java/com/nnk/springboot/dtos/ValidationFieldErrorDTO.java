@@ -4,20 +4,18 @@ import lombok.Data;
 import org.springframework.lang.Nullable;
 
 public @Data
-class FormErrorDTO {
-    private String field;
+class ValidationFieldErrorDTO {
+    private String name;
     private String rejectedValue;
     private String description;
 
-    public FormErrorDTO(String field, @Nullable Object rejectedValue, String description) {
-        this.field = field;
-
+    public ValidationFieldErrorDTO(String name, @Nullable Object rejectedValue, String description) {
+        this.name = name;
         if (rejectedValue == null) {
             this.rejectedValue = "null";
         } else {
             this.rejectedValue = rejectedValue.toString();
         }
-
         this.description = description;
     }
 }
