@@ -15,7 +15,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-import org.tinylog.Logger;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -59,8 +58,6 @@ public class CurvePointRestRepositoryIT {
                 .accept("application/*"))
                 .andExpect(status().isOk())
                 .andReturn();
-
-        Logger.debug(response.getResponse().getContentAsString());
 
         bodyResponse = objectMapper.reader().readTree(response.getResponse().getContentAsString());
         assertThat(bodyResponse.get("id").asInt())

@@ -2,7 +2,7 @@ package com.nnk.springboot.integration;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nnk.springboot.domain.Rating;
+import com.nnk.springboot.domain.RuleName;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,7 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @ActiveProfiles("testH2")
-public class RatingRestRepositoryIT {
+public class RuleNameRepositoryIT {
 
     private MockMvc mockMvc;
     // Beans
@@ -47,14 +47,14 @@ public class RatingRestRepositoryIT {
 
         JsonNode bodyResponse;
 
-        //Get all Ratings
-        mockMvc.perform(get("/restApi/ratings")
+        //Get all RuleNames
+        mockMvc.perform(get("/restApi/rules")
                 .accept("application/*"))
                 .andExpect(status().isOk());
 
 
-        //Get Rating 1
-        MvcResult response = mockMvc.perform(get("/restApi/ratings/1")
+        //Get RuleName 1
+        MvcResult response = mockMvc.perform(get("/restApi/rules/1")
                 .accept("application/*"))
                 .andExpect(status().isOk())
                 .andReturn();
@@ -63,8 +63,8 @@ public class RatingRestRepositoryIT {
         assertThat(bodyResponse.get("id").asInt())
                 .isEqualTo(1);
 
-        // No Rating 85 : Not Found
-        response = mockMvc.perform(get("/restApi/ratings/85")
+        // No RuleName 85 : Not Found
+        response = mockMvc.perform(get("/restApi/rules/85")
                 .accept("application/*"))
                 .andExpect(status().isNotFound())
                 .andReturn();
@@ -72,44 +72,48 @@ public class RatingRestRepositoryIT {
         assertThat(response.getResponse().getContentAsString())
                 .isEmpty();
 
-        // Add new ratingList
+        // Add new ruleNameList
 
-        Rating addedRating = new Rating("moodysRating5", "sandPRating5", "fitchRating5", 10);
-        Rating invalidRating = new Rating("moodysRating5", "sandPRating5", "fitchRating5", null);
+        RuleName addedRuleName = new RuleName("name4", "description4", "json4", "template4", "sqlStr4", "sqlPart4");
+        RuleName invalidRuleName = new RuleName("name4", "", "json4", "template4", "sqlStr4", "sqlPart4");
 
-        response = mockMvc.perform(post("/restApi/ratings")
+        response = mockMvc.perform(post("/restApi/rules")
                 .accept("application/*")
-                .content(objectMapper.writeValueAsString(addedRating))
+                .content(objectMapper.writeValueAsString(addedRuleName))
                 .with(csrf()))
                 .andExpect(status().isCreated())
                 .andReturn();
 
         bodyResponse = objectMapper.reader().readTree(response.getResponse().getContentAsString());
-        assertThat(bodyResponse.get("moodysRating").asText())
-                .isEqualTo(addedRating.getMoodysRating());
-        assertThat(bodyResponse.get("sandPRating").asText())
-                .isEqualTo(addedRating.getSandPRating());
-        assertThat(bodyResponse.get("fitchRating").asText())
-                .isEqualTo(addedRating.getFitchRating());
-        assertThat(bodyResponse.get("orderNumber").asInt())
-                .isEqualTo(addedRating.getOrderNumber());
+        assertThat(bodyResponse.get("name").asText())
+                .isEqualTo(addedRuleName.getName());
+        assertThat(bodyResponse.get("description").asText())
+                .isEqualTo(addedRuleName.getDescription());
+        assertThat(bodyResponse.get("json").asText())
+                .isEqualTo(addedRuleName.getJson());
+        assertThat(bodyResponse.get("template").asText())
+                .isEqualTo(addedRuleName.getTemplate());
+        assertThat(bodyResponse.get("sqlStr").asText())
+                .isEqualTo(addedRuleName.getSqlStr());
+        assertThat(bodyResponse.get("sqlPart").asText())
+                .isEqualTo(addedRuleName.getSqlPart());
 
         // Invalid DTO
 
-        mockMvc.perform(post("/restApi/ratings")
+        mockMvc.perform(post("/restApi/rules")
                 .accept("application/*")
-                .content(objectMapper.writeValueAsString(invalidRating))
+                .content(objectMapper.writeValueAsString(invalidRuleName))
                 .with(csrf()))
                 .andExpect(status().isBadRequest());
 
 
-        // Successful partial update on ratinglist 1
+        // Successful partial update on ruleNamelist 1
 
-        Rating updateRating = new Rating("otherMoodysRating", "sandPRating1", "otherFitchRating", 1);
+        RuleName updateRuleName = new RuleName("newName", "description1", "json1", "newTemplate", "sqlStr1", "sqlPart1");
 
-        response = mockMvc.perform(patch("/restApi/ratings/1")
+        response = mockMvc.perform(patch("/restApi/rules/1")
                 .accept("application/*")
-                .content(objectMapper.writeValueAsString(updateRating))
+                .content(objectMapper.writeValueAsString(updateRuleName))
                 .with(csrf()))
                 .andExpect(status().isOk())
                 .andReturn();
@@ -117,39 +121,48 @@ public class RatingRestRepositoryIT {
         bodyResponse = objectMapper.reader().readTree(response.getResponse().getContentAsString());
         assertThat(bodyResponse.get("id").asInt())
                 .isEqualTo(1);
-        assertThat(bodyResponse.get("moodysRating").asText())
-                .isEqualTo(updateRating.getMoodysRating());
-        assertThat(bodyResponse.get("sandPRating").asText())
-                .isEqualTo(updateRating.getSandPRating());
-        assertThat(bodyResponse.get("fitchRating").asText())
-                .isEqualTo(updateRating.getFitchRating());
-        assertThat(bodyResponse.get("orderNumber").asInt())
-                .isEqualTo(updateRating.getOrderNumber());
+        assertThat(bodyResponse.get("name").asText())
+                .isEqualTo(updateRuleName.getName());
+        assertThat(bodyResponse.get("description").asText())
+                .isEqualTo(updateRuleName.getDescription());
+        assertThat(bodyResponse.get("json").asText())
+                .isEqualTo(updateRuleName.getJson());
+        assertThat(bodyResponse.get("template").asText())
+                .isEqualTo(updateRuleName.getTemplate());
+        assertThat(bodyResponse.get("sqlStr").asText())
+                .isEqualTo(updateRuleName.getSqlStr());
+        assertThat(bodyResponse.get("sqlPart").asText())
+                .isEqualTo(updateRuleName.getSqlPart());
 
         // Put ID 86
-        // Creates a resource identical to rating except with next generated ID
-        response = mockMvc.perform(put("/restApi/ratings/86")
+        // Creates a resource identical to ruleName except with next generated ID
+        response = mockMvc.perform(put("/restApi/rules/86")
                 .accept("application/*")
-                .content(objectMapper.writeValueAsString(updateRating))
+                .content(objectMapper.writeValueAsString(updateRuleName))
                 .with(csrf()))
                 .andExpect(status().isCreated())
                 .andReturn();
 
         bodyResponse = objectMapper.reader().readTree(response.getResponse().getContentAsString());
 
-        int putRatingId = bodyResponse.get("id").asInt();
+        int putRuleNameId = bodyResponse.get("id").asInt();
 
-        assertThat(bodyResponse.get("moodysRating").asText())
-                .isEqualTo(updateRating.getMoodysRating());
-        assertThat(bodyResponse.get("sandPRating").asText())
-                .isEqualTo(updateRating.getSandPRating());
-        assertThat(bodyResponse.get("fitchRating").asText())
-                .isEqualTo(updateRating.getFitchRating());
-        assertThat(bodyResponse.get("orderNumber").asInt())
-                .isEqualTo(updateRating.getOrderNumber());
+        assertThat(bodyResponse.get("name").asText())
+                .isEqualTo(updateRuleName.getName());
+        assertThat(bodyResponse.get("description").asText())
+                .isEqualTo(updateRuleName.getDescription());
+        assertThat(bodyResponse.get("json").asText())
+                .isEqualTo(updateRuleName.getJson());
+        assertThat(bodyResponse.get("template").asText())
+                .isEqualTo(updateRuleName.getTemplate());
+        assertThat(bodyResponse.get("sqlStr").asText())
+                .isEqualTo(updateRuleName.getSqlStr());
+        assertThat(bodyResponse.get("sqlPart").asText())
+                .isEqualTo(updateRuleName.getSqlPart());
 
-        // Successful Delete of ratingList with last put ID
-        response = mockMvc.perform(delete("/restApi/ratings/" + putRatingId)
+
+        // Successful Delete of ruleNameList with last put ID
+        response = mockMvc.perform(delete("/restApi/rules/" + putRuleNameId)
                 .accept("application/*")
                 .with(csrf()))
                 .andExpect(status().isNoContent())
@@ -159,7 +172,7 @@ public class RatingRestRepositoryIT {
                 .isEmpty();
 
         // Element already suppressed : error occurred
-        mockMvc.perform(delete("/restApi/ratings/" + putRatingId)
+        mockMvc.perform(delete("/restApi/rules/" + putRuleNameId)
                 .accept("application/*")
                 .with(csrf()))
                 .andExpect(status().isNotFound());
