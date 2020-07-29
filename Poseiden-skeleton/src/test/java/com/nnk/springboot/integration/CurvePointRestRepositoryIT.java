@@ -72,7 +72,7 @@ public class CurvePointRestRepositoryIT {
         assertThat(response.getResponse().getContentAsString())
                 .isEmpty();
 
-        // Add new curvePointList
+        // Add new curvePoint
 
         CurvePoint addedCurvePoint = new CurvePoint(5, 3.6, 4.98);
         CurvePoint invalidCurvePoint = new CurvePoint(5, -3.2, 41.2);
@@ -101,7 +101,7 @@ public class CurvePointRestRepositoryIT {
                 .andExpect(status().isBadRequest());
 
 
-        // Successful partial update on curvePointlist 1
+        // Successful partial update on curvePoint 1
 
         CurvePoint updateCurvePoint = new CurvePoint(1, 3.6, 4.98);
 
@@ -140,7 +140,7 @@ public class CurvePointRestRepositoryIT {
         assertThat(bodyResponse.get("value").asDouble())
                 .isEqualTo(updateCurvePoint.getValue());
 
-        // Successful Delete of curvePointList with last put ID
+        // Successful Delete of curvePoint with last put ID
         response = mockMvc.perform(delete("/restApi/curvePoints/" + putCurvePointId)
                 .accept("application/*")
                 .with(csrf()))

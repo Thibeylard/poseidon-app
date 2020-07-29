@@ -72,7 +72,7 @@ public class RuleNameRepositoryIT {
         assertThat(response.getResponse().getContentAsString())
                 .isEmpty();
 
-        // Add new ruleNameList
+        // Add new ruleName
 
         RuleName addedRuleName = new RuleName("name4", "description4", "json4", "template4", "sqlStr4", "sqlPart4");
         RuleName invalidRuleName = new RuleName("name4", "", "json4", "template4", "sqlStr4", "sqlPart4");
@@ -107,7 +107,7 @@ public class RuleNameRepositoryIT {
                 .andExpect(status().isBadRequest());
 
 
-        // Successful partial update on ruleNamelist 1
+        // Successful partial update on ruleName 1
 
         RuleName updateRuleName = new RuleName("newName", "description1", "json1", "newTemplate", "sqlStr1", "sqlPart1");
 
@@ -161,7 +161,7 @@ public class RuleNameRepositoryIT {
                 .isEqualTo(updateRuleName.getSqlPart());
 
 
-        // Successful Delete of ruleNameList with last put ID
+        // Successful Delete of ruleName with last put ID
         response = mockMvc.perform(delete("/restApi/rules/" + putRuleNameId)
                 .accept("application/*")
                 .with(csrf()))

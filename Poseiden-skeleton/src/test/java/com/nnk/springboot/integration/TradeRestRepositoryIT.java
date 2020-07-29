@@ -2,7 +2,7 @@ package com.nnk.springboot.integration;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nnk.springboot.domain.Rating;
+import com.nnk.springboot.domain.Trade;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,7 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @ActiveProfiles("testH2")
-public class RatingRestRepositoryIT {
+public class TradeRestRepositoryIT {
 
     private MockMvc mockMvc;
     // Beans
@@ -47,24 +47,24 @@ public class RatingRestRepositoryIT {
 
         JsonNode bodyResponse;
 
-        //Get all Ratings
-        mockMvc.perform(get("/restApi/ratings")
+        //Get all Trades
+        mockMvc.perform(get("/restApi/trades")
                 .accept("application/*"))
                 .andExpect(status().isOk());
 
 
-        //Get Rating 1
-        MvcResult response = mockMvc.perform(get("/restApi/ratings/1")
+        //Get Trade 1
+        MvcResult response = mockMvc.perform(get("/restApi/trades/1")
                 .accept("application/*"))
                 .andExpect(status().isOk())
                 .andReturn();
 
         bodyResponse = objectMapper.reader().readTree(response.getResponse().getContentAsString());
-        assertThat(bodyResponse.get("id").asInt())
+        assertThat(bodyResponse.get("tradeId").asInt())
                 .isEqualTo(1);
 
-        // No Rating 85 : Not Found
-        response = mockMvc.perform(get("/restApi/ratings/85")
+        // No Trade 85 : Not Found
+        response = mockMvc.perform(get("/restApi/trades/85")
                 .accept("application/*"))
                 .andExpect(status().isNotFound())
                 .andReturn();
@@ -72,84 +72,70 @@ public class RatingRestRepositoryIT {
         assertThat(response.getResponse().getContentAsString())
                 .isEmpty();
 
-        // Add new rating
+        // Add new trade
 
-        Rating addedRating = new Rating("moodysRating5", "sandPRating5", "fitchRating5", 10);
-        Rating invalidRating = new Rating("moodysRating5", "sandPRating5", "fitchRating5", null);
+        Trade addedTrade = new Trade("account_x", "type_x");
+        Trade invalidTrade = new Trade("account_x", "");
 
-        response = mockMvc.perform(post("/restApi/ratings")
+        response = mockMvc.perform(post("/restApi/trades")
                 .accept("application/*")
-                .content(objectMapper.writeValueAsString(addedRating))
+                .content(objectMapper.writeValueAsString(addedTrade))
                 .with(csrf()))
                 .andExpect(status().isCreated())
                 .andReturn();
 
         bodyResponse = objectMapper.reader().readTree(response.getResponse().getContentAsString());
-        assertThat(bodyResponse.get("moodysRating").asText())
-                .isEqualTo(addedRating.getMoodysRating());
-        assertThat(bodyResponse.get("sandPRating").asText())
-                .isEqualTo(addedRating.getSandPRating());
-        assertThat(bodyResponse.get("fitchRating").asText())
-                .isEqualTo(addedRating.getFitchRating());
-        assertThat(bodyResponse.get("orderNumber").asInt())
-                .isEqualTo(addedRating.getOrderNumber());
+        assertThat(bodyResponse.get("account").asText())
+                .isEqualTo(addedTrade.getAccount());
+        assertThat(bodyResponse.get("type").asText())
+                .isEqualTo(addedTrade.getType());
 
         // Invalid DTO
 
-        mockMvc.perform(post("/restApi/ratings")
+        mockMvc.perform(post("/restApi/trades")
                 .accept("application/*")
-                .content(objectMapper.writeValueAsString(invalidRating))
+                .content(objectMapper.writeValueAsString(invalidTrade))
                 .with(csrf()))
                 .andExpect(status().isBadRequest());
 
 
-        // Successful partial update on rating 1
+        // Successful partial update on trade 1
 
-        Rating updateRating = new Rating("otherMoodysRating", "sandPRating1", "otherFitchRating", 1);
+        Trade updateTrade = new Trade("account_a", "type_a");
 
-        response = mockMvc.perform(patch("/restApi/ratings/1")
+        response = mockMvc.perform(patch("/restApi/trades/1")
                 .accept("application/*")
-                .content(objectMapper.writeValueAsString(updateRating))
+                .content(objectMapper.writeValueAsString(updateTrade))
                 .with(csrf()))
                 .andExpect(status().isOk())
                 .andReturn();
 
         bodyResponse = objectMapper.reader().readTree(response.getResponse().getContentAsString());
-        assertThat(bodyResponse.get("id").asInt())
+        assertThat(bodyResponse.get("tradeId").asInt())
                 .isEqualTo(1);
-        assertThat(bodyResponse.get("moodysRating").asText())
-                .isEqualTo(updateRating.getMoodysRating());
-        assertThat(bodyResponse.get("sandPRating").asText())
-                .isEqualTo(updateRating.getSandPRating());
-        assertThat(bodyResponse.get("fitchRating").asText())
-                .isEqualTo(updateRating.getFitchRating());
-        assertThat(bodyResponse.get("orderNumber").asInt())
-                .isEqualTo(updateRating.getOrderNumber());
+        assertThat(bodyResponse.get("account").asText())
+                .isEqualTo(updateTrade.getAccount());
+        assertThat(bodyResponse.get("type").asText())
+                .isEqualTo(updateTrade.getType());
 
         // Put ID 86
-        // Creates a resource identical to rating except with next generated ID
-        response = mockMvc.perform(put("/restApi/ratings/86")
+        // Creates a resource identical to trade except with next generated ID
+        response = mockMvc.perform(put("/restApi/trades/86")
                 .accept("application/*")
-                .content(objectMapper.writeValueAsString(updateRating))
+                .content(objectMapper.writeValueAsString(updateTrade))
                 .with(csrf()))
                 .andExpect(status().isCreated())
                 .andReturn();
 
         bodyResponse = objectMapper.reader().readTree(response.getResponse().getContentAsString());
+        int putTradeId = bodyResponse.get("tradeId").asInt();
+        assertThat(bodyResponse.get("account").asText())
+                .isEqualTo(updateTrade.getAccount());
+        assertThat(bodyResponse.get("type").asText())
+                .isEqualTo(updateTrade.getType());
 
-        int putRatingId = bodyResponse.get("id").asInt();
-
-        assertThat(bodyResponse.get("moodysRating").asText())
-                .isEqualTo(updateRating.getMoodysRating());
-        assertThat(bodyResponse.get("sandPRating").asText())
-                .isEqualTo(updateRating.getSandPRating());
-        assertThat(bodyResponse.get("fitchRating").asText())
-                .isEqualTo(updateRating.getFitchRating());
-        assertThat(bodyResponse.get("orderNumber").asInt())
-                .isEqualTo(updateRating.getOrderNumber());
-
-        // Successful Delete of rating with last put ID
-        response = mockMvc.perform(delete("/restApi/ratings/" + putRatingId)
+        // Successful Delete of trade with last put ID
+        response = mockMvc.perform(delete("/restApi/trades/" + putTradeId)
                 .accept("application/*")
                 .with(csrf()))
                 .andExpect(status().isNoContent())
@@ -159,7 +145,7 @@ public class RatingRestRepositoryIT {
                 .isEmpty();
 
         // Element already suppressed : error occurred
-        mockMvc.perform(delete("/restApi/ratings/" + putRatingId)
+        mockMvc.perform(delete("/restApi/trades/" + putTradeId)
                 .accept("application/*")
                 .with(csrf()))
                 .andExpect(status().isNotFound());

@@ -4,10 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
-import com.nnk.springboot.domain.CurvePoint;
-import com.nnk.springboot.domain.Rating;
-import com.nnk.springboot.domain.RuleName;
-import com.nnk.springboot.domain.User;
+import com.nnk.springboot.domain.*;
 import com.nnk.springboot.validators.BidListValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -39,7 +36,7 @@ public class ApplicationConfig extends RepositoryRestConfigurerAdapter {
         repositoryRestConfiguration
                 .setBasePath("/restApi")
                 .setReturnBodyForPutAndPost(true)
-                .exposeIdsFor(CurvePoint.class, Rating.class, RuleName.class, User.class);
+                .exposeIdsFor(CurvePoint.class, Rating.class, RuleName.class, Trade.class, User.class);
         repositoryRestConfiguration.returnBodyOnUpdate("application/json");
         repositoryRestConfiguration.returnBodyOnCreate("application/json");
     }
