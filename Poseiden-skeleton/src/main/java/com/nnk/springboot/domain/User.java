@@ -26,5 +26,12 @@ class User {
     protected User() {
     }
 
+    public User(String fullname, String username, String password, String role) {
+        this.fullname = fullname;
+        this.username = username;
+        this.password = password;
+        this.role = role;
+    }
+
 
 }
