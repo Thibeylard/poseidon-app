@@ -4,6 +4,7 @@ import com.nnk.springboot.dtos.ErrorDTO;
 import com.nnk.springboot.dtos.ValidationErrorDTO;
 import com.nnk.springboot.dtos.ValidationFieldErrorDTO;
 import com.nnk.springboot.exceptions.ResourceIdNotFoundException;
+import org.springframework.dao.DataAccessException;
 import org.springframework.data.rest.core.RepositoryConstraintViolationException;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -55,13 +56,13 @@ public class GlobalControllerAdvice {
 
 
     /**
-     * Controllers Exception Default Handler
+     * Controllers DataAccessException Handler
      *
      * @param e Exception
      * @return Status Code
      */
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorDTO> defaultHandlerException(Exception e) {
+    @ExceptionHandler(DataAccessException.class)
+    public ResponseEntity<ErrorDTO> defaultHandlerException(DataAccessException e) {
         ErrorDTO error = new ErrorDTO(
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
                 HttpStatus.INTERNAL_SERVER_ERROR.name(),
