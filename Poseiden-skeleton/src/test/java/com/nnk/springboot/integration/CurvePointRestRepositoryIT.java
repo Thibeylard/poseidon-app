@@ -2,7 +2,7 @@ package com.nnk.springboot.integration;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nnk.springboot.domain.BidList;
+import com.nnk.springboot.domain.CurvePoint;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,6 +15,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import org.tinylog.Logger;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -25,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @ActiveProfiles("testH2")
-public class BidListRestRepositoryIT {
+public class CurvePointRestRepositoryIT {
 
     private MockMvc mockMvc;
     // Beans
@@ -47,24 +48,26 @@ public class BidListRestRepositoryIT {
 
         JsonNode bodyResponse;
 
-        //Get all BidLists
-        mockMvc.perform(get("/restApi/bidLists")
+        //Get all CurvePoints
+        mockMvc.perform(get("/restApi/curvePoints")
                 .accept("application/*"))
                 .andExpect(status().isOk());
 
 
-        //Get BidList 1
-        MvcResult response = mockMvc.perform(get("/restApi/bidLists/1")
+        //Get CurvePoint 1
+        MvcResult response = mockMvc.perform(get("/restApi/curvePoints/1")
                 .accept("application/*"))
                 .andExpect(status().isOk())
                 .andReturn();
 
+        Logger.debug(response.getResponse().getContentAsString());
+
         bodyResponse = objectMapper.reader().readTree(response.getResponse().getContentAsString());
-        assertThat(bodyResponse.get("bidListId").asInt())
+        assertThat(bodyResponse.get("id").asInt())
                 .isEqualTo(1);
 
-        // No BidList 85 : Not Found
-        response = mockMvc.perform(get("/restApi/bidLists/85")
+        // No CurvePoint 85 : Not Found
+        response = mockMvc.perform(get("/restApi/curvePoints/85")
                 .accept("application/*"))
                 .andExpect(status().isNotFound())
                 .andReturn();
@@ -72,72 +75,76 @@ public class BidListRestRepositoryIT {
         assertThat(response.getResponse().getContentAsString())
                 .isEmpty();
 
-        // Add new bidList
+        // Add new curvePointList
 
-        BidList addedBid = new BidList("account_x", "type_x", 65.4);
-        BidList invalidBid = new BidList("account_x", "", 65.4);
+        CurvePoint addedCurvePoint = new CurvePoint(5, 3.6, 4.98);
+        CurvePoint invalidCurvePoint = new CurvePoint(5, -3.2, 41.2);
 
-        response = mockMvc.perform(post("/restApi/bidLists")
+        response = mockMvc.perform(post("/restApi/curvePoints")
                 .accept("application/*")
-                .content(objectMapper.writeValueAsString(addedBid))
+                .content(objectMapper.writeValueAsString(addedCurvePoint))
                 .with(csrf()))
                 .andExpect(status().isCreated())
                 .andReturn();
 
         bodyResponse = objectMapper.reader().readTree(response.getResponse().getContentAsString());
-        assertThat(bodyResponse.get("account").asText())
-                .isEqualTo(addedBid.getAccount());
-        assertThat(bodyResponse.get("type").asText())
-                .isEqualTo(addedBid.getType());
-        assertThat(bodyResponse.get("bidQuantity").asDouble())
-                .isEqualTo(addedBid.getBidQuantity());
+        assertThat(bodyResponse.get("curveId").asInt())
+                .isEqualTo(addedCurvePoint.getCurveId());
+        assertThat(bodyResponse.get("term").asDouble())
+                .isEqualTo(addedCurvePoint.getTerm());
+        assertThat(bodyResponse.get("value").asDouble())
+                .isEqualTo(addedCurvePoint.getValue());
 
         // Invalid DTO
 
-        mockMvc.perform(post("/restApi/bidLists")
+        mockMvc.perform(post("/restApi/curvePoints")
                 .accept("application/*")
-                .content(objectMapper.writeValueAsString(invalidBid))
+                .content(objectMapper.writeValueAsString(invalidCurvePoint))
                 .with(csrf()))
                 .andExpect(status().isBadRequest());
 
 
-        // Successful partial update on bidlist 1
+        // Successful partial update on curvePointlist 1
 
-        BidList updateBid = new BidList("account_a", "type_a", 42.3);
+        CurvePoint updateCurvePoint = new CurvePoint(1, 3.6, 4.98);
 
-        response = mockMvc.perform(patch("/restApi/bidLists/1")
+        response = mockMvc.perform(patch("/restApi/curvePoints/1")
                 .accept("application/*")
-                .content(objectMapper.writeValueAsString(updateBid))
+                .content(objectMapper.writeValueAsString(updateCurvePoint))
                 .with(csrf()))
                 .andExpect(status().isOk())
                 .andReturn();
 
         bodyResponse = objectMapper.reader().readTree(response.getResponse().getContentAsString());
-        assertThat(bodyResponse.get("bidListId").asInt())
+        assertThat(bodyResponse.get("id").asInt())
                 .isEqualTo(1);
-        assertThat(bodyResponse.get("bidQuantity").asDouble())
-                .isEqualTo(updateBid.getBidQuantity());
+        assertThat(bodyResponse.get("term").asDouble())
+                .isEqualTo(updateCurvePoint.getTerm());
+        assertThat(bodyResponse.get("value").asDouble())
+                .isEqualTo(updateCurvePoint.getValue());
 
         // Put ID 86
-        // Creates a resource identical to bid except with next generated ID
-        response = mockMvc.perform(put("/restApi/bidLists/86")
+        // Creates a resource identical to curvePoint except with next generated ID
+        response = mockMvc.perform(put("/restApi/curvePoints/86")
                 .accept("application/*")
-                .content(objectMapper.writeValueAsString(updateBid))
+                .content(objectMapper.writeValueAsString(updateCurvePoint))
                 .with(csrf()))
                 .andExpect(status().isCreated())
                 .andReturn();
 
         bodyResponse = objectMapper.reader().readTree(response.getResponse().getContentAsString());
-        int putBidId = bodyResponse.get("bidListId").asInt();
-        assertThat(bodyResponse.get("account").asText())
-                .isEqualTo(updateBid.getAccount());
-        assertThat(bodyResponse.get("type").asText())
-                .isEqualTo(updateBid.getType());
-        assertThat(bodyResponse.get("bidQuantity").asDouble())
-                .isEqualTo(updateBid.getBidQuantity());
 
-        // Successful Delete of bidList with last put ID
-        response = mockMvc.perform(delete("/restApi/bidLists/" + putBidId)
+        int putCurvePointId = bodyResponse.get("id").asInt();
+
+        assertThat(bodyResponse.get("curveId").asInt())
+                .isEqualTo(updateCurvePoint.getCurveId());
+        assertThat(bodyResponse.get("term").asDouble())
+                .isEqualTo(updateCurvePoint.getTerm());
+        assertThat(bodyResponse.get("value").asDouble())
+                .isEqualTo(updateCurvePoint.getValue());
+
+        // Successful Delete of curvePointList with last put ID
+        response = mockMvc.perform(delete("/restApi/curvePoints/" + putCurvePointId)
                 .accept("application/*")
                 .with(csrf()))
                 .andExpect(status().isNoContent())
@@ -147,7 +154,7 @@ public class BidListRestRepositoryIT {
                 .isEmpty();
 
         // Element already suppressed : error occurred
-        mockMvc.perform(delete("/restApi/bidLists/" + putBidId)
+        mockMvc.perform(delete("/restApi/curvePoints/" + putCurvePointId)
                 .accept("application/*")
                 .with(csrf()))
                 .andExpect(status().isNotFound());
