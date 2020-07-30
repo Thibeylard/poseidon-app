@@ -132,6 +132,7 @@ public class UserRestRepositoryIT {
 
         response = mockMvc.perform(post("/restApi/users")
                 .accept("application/*")
+                .contentType("application/json")
                 .content(objectMapper.writeValueAsString(addedUser))
                 .with(csrf()))
                 .andExpect(status().isCreated())
@@ -144,7 +145,7 @@ public class UserRestRepositoryIT {
         assertThat(bodyResponse.get("username").asText())
                 .isEqualTo(addedUser.getUsername());
         assertThat(bodyResponse.get("password").asText())
-                .isEqualTo(addedUser.getPassword());
+                .isNotEqualTo(addedUser.getPassword()); // Password must be encoded
         assertThat(bodyResponse.get("role").asText())
                 .isEqualTo(addedUser.getRole());
 
@@ -152,6 +153,7 @@ public class UserRestRepositoryIT {
 
         mockMvc.perform(post("/restApi/users")
                 .accept("application/*")
+                .contentType("application/json")
                 .content(objectMapper.writeValueAsString(invalidUser))
                 .with(csrf()))
                 .andExpect(status().isBadRequest());
