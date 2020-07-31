@@ -160,18 +160,6 @@
 			<scope>test</scope>
 		</dependency>
 
-		<!-- =================== tinylog related dependencies =================== -->
-		<dependency>
-			<groupId>org.tinylog</groupId>
-			<artifactId>tinylog-api</artifactId>
-			<version>${tinylog.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.tinylog</groupId>
-			<artifactId>tinylog-impl</artifactId>
-			<version>${tinylog.version}</version>
-		</dependency>
-
 		<!-- =================== Tests related dependencies =================== -->
 		<dependency>
 			<groupId>junit</groupId>

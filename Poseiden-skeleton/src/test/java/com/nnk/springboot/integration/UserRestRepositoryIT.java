@@ -17,7 +17,6 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestBuilders.formLogin;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -42,19 +41,22 @@ public class UserRestRepositoryIT {
                 .build();
     }
 
-    @Test
-    @WithMockUser(roles = "USER")
+/*    @Test
     public void operationsForbiddenForClassicUser() throws Exception {
-        mockMvc.perform(formLogin().user("user").password("123456"))
-                .andExpect(status().isOk());
+        mockMvc.perform(formLogin()
+                .user("userC")
+                .password("123456"))
+                .andExpect(authenticated());
 
         // GET FORBIDDEN
         mockMvc.perform(get("/restApi/users")
+                .with(user("userC"))
                 .accept("application/*"))
                 .andExpect(status().isForbidden());
 
 
         MvcResult response = mockMvc.perform(get("/restApi/users/1")
+                .with(user("userC"))
                 .accept("application/*"))
                 .andExpect(status().isForbidden())
                 .andReturn();
@@ -63,7 +65,9 @@ public class UserRestRepositoryIT {
         User addedUser = new User("User WithNameD", "userD", "heLLoW0r!d", "USER");
 
         response = mockMvc.perform(post("/restApi/users")
+                .with(user("userC"))
                 .accept("application/*")
+                .contentType("application/json")
                 .content(objectMapper.writeValueAsString(addedUser))
                 .with(csrf()))
                 .andExpect(status().isForbidden())
@@ -74,7 +78,9 @@ public class UserRestRepositoryIT {
         User updateUser = new User("User WithOtherName", "userOther", "heLLoW0r!d", "USER");
 
         response = mockMvc.perform(patch("/restApi/users/1")
+                .with(user("userC"))
                 .accept("application/*")
+                .contentType("application/json")
                 .content(objectMapper.writeValueAsString(updateUser))
                 .with(csrf()))
                 .andExpect(status().isForbidden())
@@ -83,7 +89,9 @@ public class UserRestRepositoryIT {
 
         // PUT FORBIDDEN
         response = mockMvc.perform(put("/restApi/users/86")
+                .with(user("userC"))
                 .accept("application/*")
+                .contentType("application/json")
                 .content(objectMapper.writeValueAsString(updateUser))
                 .with(csrf()))
                 .andExpect(status().isForbidden())
@@ -91,12 +99,13 @@ public class UserRestRepositoryIT {
 
         // DELETE FORBIDDEN
         response = mockMvc.perform(delete("/restApi/users/1")
+                .with(user("userC"))
                 .accept("application/*")
                 .with(csrf()))
                 .andExpect(status().isForbidden())
                 .andReturn();
 
-    }
+    }*/
 
     @Test
     @WithMockUser(roles = "ADMIN")

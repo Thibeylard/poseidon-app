@@ -6,6 +6,8 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import com.nnk.springboot.domain.*;
 import com.nnk.springboot.validators.BidListValidator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -78,5 +80,10 @@ public class ApplicationConfig extends RepositoryRestConfigurerAdapter {
                 .registerModule(new ParameterNamesModule())
                 .registerModule(new Jdk8Module())
                 .registerModule(new JavaTimeModule());
+    }
+
+    @Bean
+    public Logger getSlf4jLogger() {
+        return LoggerFactory.getLogger("Slf4jLogger");
     }
 }
