@@ -17,6 +17,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestBuilders.formLogin;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -44,6 +45,9 @@ public class UserRestRepositoryIT {
     @Test
     @WithMockUser(roles = "USER")
     public void operationsForbiddenForClassicUser() throws Exception {
+        mockMvc.perform(formLogin().user("user").password("123456"))
+                .andExpect(status().isOk());
+
         // GET FORBIDDEN
         mockMvc.perform(get("/restApi/users")
                 .accept("application/*"))
