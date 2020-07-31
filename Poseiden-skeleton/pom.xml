@@ -49,6 +49,10 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-rest</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 		<dependency>
@@ -154,18 +158,6 @@
 			<artifactId>flyway-spring-test</artifactId>
 			<version>6.4.0</version>
 			<scope>test</scope>
-		</dependency>
-
-		<!-- =================== tinylog related dependencies =================== -->
-		<dependency>
-			<groupId>org.tinylog</groupId>
-			<artifactId>tinylog-api</artifactId>
-			<version>${tinylog.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.tinylog</groupId>
-			<artifactId>tinylog-impl</artifactId>
-			<version>${tinylog.version}</version>
 		</dependency>
 
 		<!-- =================== Tests related dependencies =================== -->

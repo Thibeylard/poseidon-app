@@ -20,9 +20,9 @@ class CurvePoint {
     @NotNull(message = "Curve Id must no be null")
     private Integer curveId;
     private Timestamp asOfDate;
-    @RangeDouble(min = 0.0)
+    @RangeDouble(min = 0.0, message = "Term must be positive")
     private Double term;
-    @RangeDouble(min = 0.0)
+    @RangeDouble(min = 0.0, message = "Value must be positive")
     private Double value;
     private Timestamp creationDate;
 

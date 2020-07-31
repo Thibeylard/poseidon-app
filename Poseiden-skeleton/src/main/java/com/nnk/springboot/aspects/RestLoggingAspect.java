@@ -5,12 +5,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nnk.springboot.controllers.RestController;
 import org.apache.commons.io.IOUtils;
 import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.annotation.*;
+import org.aspectj.lang.annotation.AfterReturning;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Before;
+import org.aspectj.lang.annotation.Pointcut;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.rest.core.RepositoryConstraintViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.tinylog.Logger;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -20,11 +24,12 @@ import java.util.HashMap;
 public class RestLoggingAspect {
 
     private final ObjectMapper objectMapper;
-    private String lastRequestBody;
+    private final Logger logger;
 
     @Autowired
-    public RestLoggingAspect(ObjectMapper objectMapper) {
+    public RestLoggingAspect(ObjectMapper objectMapper, Logger logger) {
         this.objectMapper = objectMapper;
+        this.logger = logger;
     }
 
     @Pointcut("execution(public * com.nnk.springboot.controllers.*ApiController.*(..))")
@@ -46,22 +51,22 @@ public class RestLoggingAspect {
             try {
                 body = IOUtils.toString(controller.getRequest().getReader());
             } catch (IllegalStateException e) {
-                Logger.debug("Body request already been read.");
+                logger.debug("Body request already been read.");
             }
 
             if (!params.isEmpty() && !body.isEmpty()) {
-                Logger.info("{} request on {} with parameters : {} and body {}", method, uri, paramJson, body);
+                logger.info("{} request on {} with parameters : {} and body {}", method, uri, paramJson, body);
             } else if (params.isEmpty() && !body.isEmpty()) {
-                Logger.info("{} request on {} with body {}", method, uri, body);
+                logger.info("{} request on {} with body {}", method, uri, body);
             } else if (!params.isEmpty()) {
-                Logger.info("{} request on {} with params {}", method, uri, paramJson);
+                logger.info("{} request on {} with params {}", method, uri, paramJson);
             } else {
-                Logger.info("{} request on {}", method, uri);
+                logger.info("{} request on {}", method, uri);
             }
 
         } catch (IOException e) {
-            Logger.error(e.getMessage());
-            Logger.info("{} request on {} with unknown parameters", method, uri);
+            logger.error(e.getMessage());
+            logger.info("{} request on {} with unknown parameters", method, uri);
         }
 
     }
@@ -70,31 +75,41 @@ public class RestLoggingAspect {
     @AfterReturning(value = "apiRequestHttpMethods()", returning = "response")
     public void logRestReturns(ResponseEntity<?> response) {
         try {
-            Logger.info("Request succeeded and returned {}", objectMapper.writeValueAsString(response.getBody()));
+            logger.info("Request succeeded and returned {}", objectMapper.writeValueAsString(response.getBody()));
         } catch (JsonProcessingException e) {
-            Logger.info("Request succeeded");
+            logger.info("Request succeeded");
         }
-    }
-
-    @AfterThrowing(value = "apiRequestHttpMethods()", throwing = "e")
-    public void logRestExceptions(Exception e) throws Exception {
-        Logger.error("Request failed on {} with : {}", e.getClass().getCanonicalName(), e.getMessage());
-        throw e;
     }
 
     @Pointcut("execution( * com.nnk.springboot.controllers.GlobalControllerAdvice.*(..))")
     private void withinGlobalControllerAdvice() {
     }
 
-    @Before("withinGlobalControllerAdvice() && execution(* handleHttpMediaTypeNotAcceptableException(..))()")
-    public void logAcceptMediaRestExceptions(JoinPoint joinPoint) throws Exception {
-        Exception e = (Exception) joinPoint.getArgs()[0];
-        Logger.error("Request aborted on {} with : {}", e.getClass().getCanonicalName(), e.getMessage());
+    @Pointcut("execution(public * *(org.springframework.web.bind.MethodArgumentNotValidException))")
+    private void isMethodArgumentNotValidExceptionHandler() {
     }
 
-    @Before("withinGlobalControllerAdvice() && execution(* handleMethodArgumentNotValidException(..))")
-    public void logValidationRestException(JoinPoint joinPoint) throws Exception {
+    @Pointcut("execution(public * *(org.springframework.data.rest.core.RepositoryConstraintViolationException))")
+    private void isRepositoryConstraintViolationExceptionHandler() {
+    }
+
+
+    @Before("withinGlobalControllerAdvice() && execution(* *(..)) && !isMethodArgumentNotValidExceptionHandler() && !isRepositoryConstraintViolationExceptionHandler()")
+    public void logGlobalControllerAdvice(JoinPoint joinPoint) {
+        Exception e = (Exception) joinPoint.getArgs()[0];
+        logger.error("Request aborted on {} with : {}", e.getClass().getCanonicalName(), e.getMessage());
+    }
+
+    @Before("withinGlobalControllerAdvice() && isMethodArgumentNotValidExceptionHandler()")
+    public void logGlobalControllerAdviceValidationRestException(JoinPoint joinPoint) {
         MethodArgumentNotValidException e = (MethodArgumentNotValidException) joinPoint.getArgs()[0];
-        Logger.error("Request aborted on invalid arguments : {} ", e.getBindingResult().getFieldErrors());
+        logger.error("Request aborted on invalid values : {} ", e.getBindingResult().getFieldErrors());
+
+    }
+
+    @Before("withinGlobalControllerAdvice() && isRepositoryConstraintViolationExceptionHandler()")
+    public void logGlobalControllerAdviceRepositoryValidationRestException(JoinPoint joinPoint) {
+        RepositoryConstraintViolationException e = (RepositoryConstraintViolationException) joinPoint.getArgs()[0];
+        logger.error("Request aborted on invalid values : {} ", e.getErrors().getFieldErrors());
     }
 }

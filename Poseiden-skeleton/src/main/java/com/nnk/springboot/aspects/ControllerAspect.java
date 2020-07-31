@@ -16,6 +16,12 @@ public class ControllerAspect {
     private void apiRequestHttpMethods() {
     }
 
+    /**
+     * Check Accept Header before each public ApiController methods
+     *
+     * @param joinPoint Current JoinPoint
+     * @throws HttpMediaTypeNotAcceptableException if invalid Request Accept Header
+     */
     @Before("apiRequestHttpMethods()")
     public void checkRequestAcceptHeader(JoinPoint joinPoint) throws HttpMediaTypeNotAcceptableException {
         RestController controller = (RestController) joinPoint.getTarget();
