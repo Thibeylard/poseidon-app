@@ -19,6 +19,7 @@ import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.web.filter.CommonsRequestLoggingFilter;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
@@ -85,5 +86,17 @@ public class ApplicationConfig extends RepositoryRestConfigurerAdapter {
     @Bean
     public Logger getSlf4jLogger() {
         return LoggerFactory.getLogger("PoseidonLogger");
+    }
+
+    @Bean
+    public CommonsRequestLoggingFilter loggingFilter() {
+        CommonsRequestLoggingFilter filter
+                = new CommonsRequestLoggingFilter();
+        filter.setIncludeQueryString(true);
+        filter.setIncludePayload(true);
+        filter.setMaxPayloadLength(10000);
+        filter.setIncludeHeaders(false);
+        filter.setAfterMessagePrefix("REQUEST DATA : ");
+        return filter;
     }
 }
