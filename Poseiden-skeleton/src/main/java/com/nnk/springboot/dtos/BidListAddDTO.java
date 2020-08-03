@@ -1,6 +1,7 @@
 package com.nnk.springboot.dtos;
 
 import com.nnk.springboot.annotations.RangeDouble;
+import com.nnk.springboot.domain.BidList;
 import lombok.Data;
 import org.springframework.validation.annotation.Validated;
 
@@ -29,7 +30,7 @@ class BidListAddDTO {
         this.bidQuantity = bidQuantity;
     }
 
-    public BidListAddDTO(BidListUpdateDTO bidList) {
+    public BidListAddDTO(BidList bidList) {
         this.account = bidList.getAccount();
         this.type = bidList.getType();
         this.bidQuantity = bidList.getBidQuantity();

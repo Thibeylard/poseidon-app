@@ -84,6 +84,6 @@ public class ApplicationConfig extends RepositoryRestConfigurerAdapter {
 
     @Bean
     public Logger getSlf4jLogger() {
-        return LoggerFactory.getLogger("Slf4jLogger");
+        return LoggerFactory.getLogger("PoseidonLogger");
     }
 }

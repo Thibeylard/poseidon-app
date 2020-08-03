@@ -33,14 +33,14 @@ public class BidListHtmlController {
 
     @GetMapping("/html/bidList/add")
     public String addBidForm(BidListAddDTO bid, Model model) {
-        model.addAttribute("bidList", bid);
+        model.addAttribute("bidListAddDTO", bid);
         return "bidList/add";
     }
 
     @PostMapping("/html/bidList/validate")
     public String validate(@Valid BidListAddDTO bid, BindingResult result, Model model) {
         if (result.hasErrors()) {
-            model.addAttribute("bidList", bid);
+            model.addAttribute("bidListAddDTO", bid);
             return "bidList/add";
         } else {
             bidListService.save(bid);
@@ -50,15 +50,15 @@ public class BidListHtmlController {
 
     @GetMapping("/html/bidList/update/{id}")
     public String showUpdateForm(@PathVariable("id") Integer id, Model model) throws ResourceIdNotFoundException {
-        model.addAttribute("bidList", bidListService.findById(id));
+        model.addAttribute("bidListUpdateDTO", bidListService.findById(id));
         return "bidList/update";
     }
 
-    @PostMapping("/html/bidList/update/{id}")
-    public String updateBid(@PathVariable("id") Integer id, @Valid BidListUpdateDTO bidListUpdateDTO,
+    @PostMapping("/html/bidList/update")
+    public String updateBid(@Valid BidListUpdateDTO bidListUpdateDTO,
                             BindingResult result, Model model) throws ResourceIdNotFoundException {
         if (result.hasErrors()) {
-            model.addAttribute("bidList", bidListUpdateDTO);
+            model.addAttribute("bidListUpdateDTO", bidListUpdateDTO);
             return "bidList/update";
         } else {
             bidListService.update(bidListUpdateDTO);

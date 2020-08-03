@@ -14,17 +14,23 @@
 
 	<div class="row">
 		<form action="#" class="form-horizontal" method="post" style="width: 100%"
-			  th:action="@{/html/bidList/update/{id}(id=${bidList.bidListId})}" th:object="${bidList}">
-			<input th:field="${bidList.bidListId}" type="hidden"/>
-			<label th:for="account">Account</label>
-			<input th:field="${bidList.account}" type="text"/><br/>
-			<div style="color:red" th:if="${#fields.hasErrors('${bidList.account}')}">Account is mandatory<br/></div>
-			<label th:for="type">Type</label>
-			<input th:field="${bidList.type}" type="text"/><br/>
-			<div style="color:red" th:if="${#fields.hasErrors('${bidList.type}')}">Type is mandatory</div>
-			<label th:for="bidQuantity">BidQuantity</label>
-			<input th:field="${bidList.bidQuantity}" type="text"/><br/>
-			<div style="color:red" th:if="${#fields.hasErrors('${bidList.bidQuantity}')}">BidQuantity must be greater or
+			  th:action="@{/html/bidList/update/{id}(id=*{bidListId})}"
+			  th:object="${bidListUpdateDTO}">
+			<input th:field="*{bidListId}" type="hidden"/>
+			<label>
+				Account
+				<input th:field="*{account}" type="text"/>
+			</label><br/>
+			<div style="color:red" th:if="${#fields.hasErrors('account')}">Account is mandatory<br/></div>
+
+			<label>Type
+				<input th:field="*{type}" type="text"/><br/>
+			</label><br/>
+			<div style="color:red" th:if="${#fields.hasErrors('type')}">Type is mandatory</div>
+			<label>BidQuantity
+				<input th:field="*{bidQuantity}" type="text"/><br/>
+			</label><br/>
+			<div style="color:red" th:if="${#fields.hasErrors('bidQuantity')}">BidQuantity must be greater or
 				equal to 0
 			</div>
 			<a th:href="@{/html/bidList/list}"><input type="button" value="Cancel"/></a>
