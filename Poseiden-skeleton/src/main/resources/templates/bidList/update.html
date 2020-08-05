@@ -14,7 +14,7 @@
 
 	<div class="row">
 		<form action="#" class="form-horizontal" method="post" style="width: 100%"
-			  th:action="@{/html/bidList/update/{id}(id=*{bidListId})}"
+			  th:action="@{/html/bidList/update}"
 			  th:object="${bidListUpdateDTO}">
 			<input th:field="*{bidListId}" type="hidden"/>
 			<label>
