@@ -1,31 +1,28 @@
-# spring-boot
-## Technical:
+[![shields](https://img.shields.io/badge/project%20status-validated-deepgreen)](https://shields.io/)
+[![shields](https://img.shields.io/badge/made%20with-java-orange)](https://shields.io/)
+[![shields](https://img.shields.io/badge/powered%20by-spring-green)](https://shields.io/)
+____________________
 
-1. Framework: Spring Boot v2.0.4
-2. Java 8
-3. Thymeleaf
-4. Bootstrap v.4.3.1
+> Ce README est basé sur les conclusions évoquées dans la présentation réalisée à la fin du projet.
 
+# Transformez votre backend en API pour rendre votre application plus flexible
 
-## Setup with Intellij IDE
-1. Create project from Initializr: File > New > project > Spring Initializr
-2. Add lib repository into pom.xml
-3. Add folders
-    - Source root: src/main/java
-    - View: src/main/resources
-    - Static: src/main/resource/static
-4. Create database with name "demo" as configuration in application.properties
-5. Run sql script to create table doc/data.sql
+## Dans le cadre de la formation OpenClassrooms "Développeur d'application Java"
 
-## Implement a Feature
-1. Create mapping domain class and place in package com.nnk.springboot.domain
-2. Create repository class and place in package com.nnk.springboot.repositories
-3. Create controller class and place in package com.nnk.springboot.controllers
-4. Create view files and place in src/main/resource/templates
+### Objectif du projet
+À partir d'un projet existant, implémenter une API REST sécurisée.
 
-## Write Unit Test
-1. Create unit test and place in package com.nnk.springboot in folder test > java
+### Progression
+Ce projet m'a permis de pratiquer le développement de l'architecture moderne API REST, notamment à l'aide de Swagger. J'ai exploré encore un peu plus le framework Spring, avec une deuxième utilisation de Spring Security, et la découverte de Spring Data JPA, Spring Data Rest, Thymeleaf, et de la validation Hibernate, que je n'avais pas encore exploités. Plusieurs difficultés à gérer les dépendances ont aussi développé mes compétences à l'investigation des erreurs infra.
 
-## Security
-1. Create user service to load user from  database and place in package com.nnk.springboot.services
-2. Add configuration class and place in package com.nnk.springboot.config
+### Réalisation
+Les objectifs du projets ont été accomplis avec les technologies demandées, et plus encore :
+* Génération des API avec Swagger.io
+* Deux type d'implémentation parallèles des controllers avec Spring MVC ou Spring Data JPA sur des base path différent ('/html' et '/api') 
+* Utilisation de Spring Data Rest pour éviter la redondance de code
+* Des validateurs et des annotations personnalisés, avec des DTO dédiés
+* Emploi de FlywayDB avec H2 pour les migrations de la base de donnée et maîtriser les tests
+* Utilisation d'aspects autour des controllers
+
+### Axes d'améliorations
+Les logs sont peu précis sur Spring Data Rest : il y aurait possibilité de développer un aspect sur les classes générées par Spring. Par ailleurs, UserRepository devrait avoir un accès plus limité pour éviter les modifications illégales. @PreAuthorize est une piste, mais elle empêche pour le moment les utilisateurs de se connecter.
